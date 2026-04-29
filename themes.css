@@ -1,0 +1,414 @@
+/* ============================================================
+   WEBPOS - THEME SYSTEM v3.0
+   7 Nuansa Baru + Dark Mode
+   Semua tema menggunakan CSS Variables
+   ============================================================ */
+
+/* ─── BASE VARIABLES ─── */
+:root {
+  --radius: 12px;
+  --font-scale: 1;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME 1: OCEAN BREEZE (Biru Laut Segar)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="ocean"] {
+  --primary: #0ea5e9;
+  --primary-light: #7dd3fc;
+  --primary-dark: #0284c7;
+  --secondary: #06b6d4;
+  --accent: #22d3ee;
+  --bg-main: #f0f9ff;
+  --bg-card: #ffffff;
+  --bg-sidebar: #0c4a6e;
+  --bg-header: #075985;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+  --border: #bae6fd;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --gradient-sidebar: linear-gradient(180deg, #0c4a6e 0%, #075985 100%);
+  --gradient-header: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  --glass: rgba(255,255,255,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME 2: FOREST MINT (Hijau Daun Natural)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="forest"] {
+  --primary: #10b981;
+  --primary-light: #6ee7b7;
+  --primary-dark: #059669;
+  --secondary: #14b8a6;
+  --accent: #34d399;
+  --bg-main: #ecfdf5;
+  --bg-card: #ffffff;
+  --bg-sidebar: #064e3b;
+  --bg-header: #065f46;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+  --border: #a7f3d0;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --gradient-sidebar: linear-gradient(180deg, #064e3b 0%, #065f46 100%);
+  --gradient-header: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+  --glass: rgba(255,255,255,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME 3: SUNSET GLOW (Oranye Magenta Warm)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="sunset"] {
+  --primary: #f97316;
+  --primary-light: #fdba74;
+  --primary-dark: #ea580c;
+  --secondary: #ec4899;
+  --accent: #fb923c;
+  --bg-main: #fff7ed;
+  --bg-card: #ffffff;
+  --bg-sidebar: #7c2d12;
+  --bg-header: #9a3412;
+  --text-main: #1c1917;
+  --text-muted: #78716c;
+  --text-inverse: #ffffff;
+  --border: #fed7aa;
+  --success: #22c55e;
+  --warning: #eab308;
+  --danger: #dc2626;
+  --gradient-sidebar: linear-gradient(180deg, #7c2d12 0%, #9a3412 100%);
+  --gradient-header: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+  --glass: rgba(255,255,255,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME 4: ROYAL PURPLE (Ungu Elegan)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="royal"] {
+  --primary: #8b5cf6;
+  --primary-light: #c4b5fd;
+  --primary-dark: #7c3aed;
+  --secondary: #a78bfa;
+  --accent: #a855f7;
+  --bg-main: #faf5ff;
+  --bg-card: #ffffff;
+  --bg-sidebar: #4c1d95;
+  --bg-header: #5b21b6;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+  --border: #ddd6fe;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --gradient-sidebar: linear-gradient(180deg, #4c1d95 0%, #5b21b6 100%);
+  --gradient-header: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  --glass: rgba(255,255,255,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME 5: ROSE GOLD (Pink Mewah)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="rose"] {
+  --primary: #e11d48;
+  --primary-light: #fda4af;
+  --primary-dark: #be123c;
+  --secondary: #f43f5e;
+  --accent: #fb7185;
+  --bg-main: #fff1f2;
+  --bg-card: #ffffff;
+  --bg-sidebar: #881337;
+  --bg-header: #9f1239;
+  --text-main: #1c1917;
+  --text-muted: #78716c;
+  --text-inverse: #ffffff;
+  --border: #fecdd3;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --gradient-sidebar: linear-gradient(180deg, #881337 0%, #9f1239 100%);
+  --gradient-header: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
+  --glass: rgba(255,255,255,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME 6: MIDNIGHT CYBER (Hitam Biru Neon)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="cyber"] {
+  --primary: #06b6d4;
+  --primary-light: #67e8f9;
+  --primary-dark: #0891b2;
+  --secondary: #22d3ee;
+  --accent: #2dd4bf;
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --bg-sidebar: #020617;
+  --bg-header: #0f172a;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-inverse: #0f172a;
+  --border: #334155;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --gradient-sidebar: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+  --gradient-header: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
+  --glass: rgba(255,255,255,0.05);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   THEME 7: CLEAN SLATE (Abu Minimalis)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="slate"] {
+  --primary: #475569;
+  --primary-light: #94a3b8;
+  --primary-dark: #334155;
+  --secondary: #64748b;
+  --accent: #818cf8;
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-sidebar: #1e293b;
+  --bg-header: #334155;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+  --border: #e2e8f0;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --gradient-sidebar: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+  --gradient-header: linear-gradient(135deg, #475569 0%, #64748b 100%);
+  --glass: rgba(255,255,255,0.15);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK MODE OVERRIDE (untuk semua tema kecuali cyber)
+   ═══════════════════════════════════════════════════════════ */
+[data-theme="ocean"][data-dark="true"],
+[data-theme="forest"][data-dark="true"],
+[data-theme="sunset"][data-dark="true"],
+[data-theme="royal"][data-dark="true"],
+[data-theme="rose"][data-dark="true"],
+[data-theme="slate"][data-dark="true"] {
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --bg-sidebar: #020617;
+  --bg-header: #0f172a;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-inverse: #0f172a;
+  --border: #334155;
+  --glass: rgba(255,255,255,0.05);
+}
+
+/* ─── GLOBAL APPLICATION ─── */
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-size: calc(14px * var(--font-scale));
+  transition: var(--transition);
+}
+
+/* Sidebar */
+.sidebar {
+  background: var(--gradient-sidebar);
+  color: var(--text-inverse);
+  border-right: 1px solid var(--border);
+}
+
+.sidebar .nav-link {
+  color: rgba(255,255,255,0.7);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active {
+  background: var(--glass);
+  color: var(--text-inverse);
+  backdrop-filter: blur(10px);
+}
+
+.sidebar .nav-link i {
+  color: var(--primary-light);
+}
+
+.sidebar .dropdown-menu {
+  background: rgba(0,0,0,0.2);
+  border-radius: var(--radius);
+}
+
+/* Header / Topbar */
+.topbar, .header {
+  background: var(--gradient-header);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-md);
+}
+
+/* Cards */
+.card, .stat-card, .content-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.card:hover, .stat-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border: none;
+  color: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  filter: brightness(1.1);
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: var(--radius);
+}
+
+/* Tables */
+table, .table {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.table th {
+  background: var(--bg-header);
+  color: var(--text-inverse);
+}
+
+.table td {
+  border-bottom: 1px solid var(--border);
+  color: var(--text-main);
+}
+
+/* Inputs */
+input, select, textarea {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: var(--radius);
+  transition: var(--transition);
+}
+
+input:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+  outline: none;
+}
+
+/* Modals */
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-main);
+}
+
+.modal-header {
+  background: var(--gradient-header);
+  color: var(--text-inverse);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+/* Status Badges */
+.badge-success { background: var(--success); color: white; }
+.badge-warning { background: var(--warning); color: white; }
+.badge-danger { background: var(--danger); color: white; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+/* Loading / Skeleton */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--border) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .card { margin-bottom: 12px; }
+}
+
+/* Theme Preview Box (untuk settings page) */
+.theme-preview {
+  width: 100%;
+  height: 80px;
+  border-radius: var(--radius);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-preview:hover {
+  transform: scale(1.05);
+  border-color: var(--primary);
+}
+
+.theme-preview.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.theme-preview .preview-header {
+  height: 30%;
+  background: var(--gradient-header);
+}
+
+.theme-preview .preview-body {
+  height: 70%;
+  background: var(--bg-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.theme-preview .preview-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+}

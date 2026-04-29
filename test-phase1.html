@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔍 TEST PHASE 1 — WebPOS Foundation</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="themes.css">
+  <link rel="stylesheet" href="sidebar.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .test-panel {
+      margin-left: 260px;
+      padding: 30px;
+    }
+    .test-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .test-card h3 {
+      color: var(--primary);
+      margin-top: 0;
+    }
+    .status-ok { color: var(--success); font-weight: 600; }
+    .status-wait { color: var(--warning); font-weight: 600; }
+    .status-error { color: var(--danger); font-weight: 600; }
+    .btn-test {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .mock-data {
+      background: var(--bg-main);
+      padding: 15px;
+      border-radius: var(--radius);
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+    }
+    @media (max-width: 768px) {
+      .test-panel { margin-left: 0; padding: 15px; margin-top: 60px; }
+    }
+  </style>
+<base target="_blank">
+</head>
+<body>
+  <!-- Mobile Toggle -->
+  <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+
+  <!-- Sidebar (render oleh nav-config.js) -->
+  <div class="sidebar" id="sidebar"></div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="test-panel">
+
+      <h1 style="color: var(--primary); margin-bottom: 8px;">🔍 PHASE 1 TEST</h1>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Verifikasi Foundation Layer: Permission + Sidebar + Theme</p>
+
+      <!-- Card 1: Theme System -->
+      <div class="test-card">
+        <h3>🎨 1. Theme System</h3>
+        <div id="themeStatus">
+          <span class="status-wait">⏳ Menunggu...</span>
+        </div>
+        <div style="margin-top: 12px;">
+          <button class="btn-test btn-primary" onclick="testTheme('ocean')">🌊 Ocean</button>
+          <button class="btn-test btn-primary" onclick="testTheme('forest')">🌲 Forest</button>
+          <button class="btn-test btn-primary" onclick="testTheme('sunset')">🌅 Sunset</button>
+          <button class="btn-test btn-primary" onclick="testTheme('royal')">👑 Royal</button>
+          <button class="btn-test btn-primary" onclick="testTheme('rose')">🌹 Rose</button>
+          <button class="btn-test btn-primary" onclick="testTheme('cyber')">⚡ Cyber</button>
+          <button class="btn-test btn-primary" onclick="testTheme('slate')">🪨 Slate</button>
+        </div>
+        <div style="margin-top: 12px;">
+          <button class="btn-test btn-secondary" onclick="toggleDark()">🌙 Toggle Dark</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Permission Manager -->
+      <div class="test-card">
+        <h3>🔐 2. Permission Manager</h3>
+        <div id="permStatus">
+          <span class="status-wait">⏳ Menunggu...</span>
+        </div>
+        <div style="margin-top: 12px;">
+          <button class="btn-test btn-primary" onclick="mockLogin('owner')">👤 Mock Login: Owner</button>
+          <button class="btn-test btn-primary" onclick="mockLogin('admin')">👤 Mock Login: Admin</button>
+          <button class="btn-test btn-primary" onclick="mockLogin('kasir')">👤 Mock Login: Kasir</button>
+          <button class="btn-test btn-primary" onclick="mockLogin('developer')">👤 Mock Login: Developer</button>
+        </div>
+      </div>
+
+      <!-- Card 3: Sidebar -->
+      <div class="test-card">
+        <h3>📂 3. Dynamic Sidebar</h3>
+        <div id="sidebarStatus">
+          <span class="status-wait">⏳ Menunggu...</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">
+          Sidebar di kiri akan otomatis render menu sesuai role yang dipilih.
+        </p>
+      </div>
+
+      <!-- Card 4: Hasil -->
+      <div class="test-card">
+        <h3>📊 4. Hasil Test</h3>
+        <div id="resultBox" class="mock-data">
+          Klik "Mock Login" di atas untuk melihat hasil...
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="settings-structure.js"></script>
+  <script src="theme-manager.js"></script>
+  <script src="permission-manager.js"></script>
+  <script src="nav-config.js"></script>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    // TEST SCRIPT
+    // ═══════════════════════════════════════════════════════════
+
+    let currentMockRole = '';
+
+    // 1. Test Theme
+    function testTheme(themeName) {
+      if (typeof themeManager !== 'undefined') {
+        themeManager.applyTheme(themeName, themeManager.darkMode);
+        updateThemeStatus(`✅ Tema aktif: ${themeName}`);
+      } else {
+        // Fallback: langsung set attribute
+        document.documentElement.setAttribute('data-theme', themeName);
+        updateThemeStatus(`✅ Tema aktif: ${themeName} (fallback)`);
+      }
+    }
+
+    function toggleDark() {
+      if (typeof themeManager !== 'undefined') {
+        themeManager.toggleDarkMode();
+        updateThemeStatus(`✅ Dark mode: ${themeManager.darkMode ? 'ON' : 'OFF'}`);
+      } else {
+        const html = document.documentElement;
+        const isDark = html.getAttribute('data-dark') === 'true';
+        html.setAttribute('data-dark', isDark ? 'false' : 'true');
+        updateThemeStatus(`✅ Dark mode: ${!isDark ? 'ON' : 'OFF'} (fallback)`);
+      }
+    }
+
+    function updateThemeStatus(msg) {
+      document.getElementById('themeStatus').innerHTML = `<span class="status-ok">${msg}</span>`;
+    }
+
+    // 2. Mock Login (Simulasi tanpa Firebase)
+    function mockLogin(role) {
+      currentMockRole = role;
+
+      // Simulasi data user
+      const mockData = {
+        profile: {
+          nama: role === 'owner' ? 'Budi (Owner)' : role === 'admin' ? 'Andi (Admin)' : role === 'developer' ? 'Dev (Dev)' : 'Kasir 1',
+          email: `${role}@toko.com`,
+          role: role,
+          tokoId: 'toko_demo'
+        },
+        permissions: getMockPermissions(role)
+      };
+
+      // Inject ke permission manager
+      if (typeof permManager !== 'undefined') {
+        permManager.permissions = mockData.permissions;
+        permManager.role = role;
+        permManager.tokoId = 'toko_demo';
+        permManager.userProfile = mockData.profile;
+        permManager.uid = `mock_${role}_123`;
+        permManager.loaded = true;
+        permManager.canManageUsers = (role === 'owner' || role === 'developer' || (role === 'admin' && mockData.permissions.pengguna === true));
+        permManager.notifyListeners();
+      }
+
+      updatePermStatus(`✅ Mock login: ${role.toUpperCase()}`);
+      updateSidebarStatus(`✅ Sidebar dirender untuk: ${role.toUpperCase()}`);
+      showResult(role, mockData);
+    }
+
+    function getMockPermissions(role) {
+      const defaults = {
+        owner: {
+          dashboard: true, kasir: true, produk: true, pembelian: true,
+          riwayat_transaksi: true, kas_management: true, hutang_piutang: true,
+          laporan_penjualan: true, laporan_stok: true, barang_terlaris: true,
+          saldo_telegram: true, data_pelanggan: true, pengguna: true,
+          pengaturan: true, backup_sync: true, log_aktivitas: true,
+          printer_struk: true, reset_data: true, developer_zone: false
+        },
+        admin: {
+          dashboard: true, kasir: true, produk: true, pembelian: true,
+          riwayat_transaksi: true, kas_management: true, hutang_piutang: true,
+          laporan_penjualan: true, laporan_stok: true, barang_terlaris: true,
+          saldo_telegram: true, data_pelanggan: true, pengguna: false,
+          pengaturan: false, backup_sync: false, log_aktivitas: false,
+          printer_struk: true, reset_data: false, developer_zone: false
+        },
+        kasir: {
+          dashboard: true, kasir: true, produk: false, pembelian: false,
+          riwayat_transaksi: true, kas_management: true, hutang_piutang: true,
+          laporan_penjualan: false, laporan_stok: false, barang_terlaris: false,
+          saldo_telegram: false, data_pelanggan: true, pengguna: false,
+          pengaturan: false, backup_sync: false, log_aktivitas: false,
+          printer_struk: true, reset_data: false, developer_zone: false
+        },
+        developer: {
+          dashboard: true, kasir: true, produk: true, pembelian: true,
+          riwayat_transaksi: true, kas_management: true, hutang_piutang: true,
+          laporan_penjualan: true, laporan_stok: true, barang_terlaris: true,
+          saldo_telegram: true, data_pelanggan: true, pengguna: true,
+          pengaturan: true, backup_sync: true, log_aktivitas: true,
+          printer_struk: true, reset_data: true, developer_zone: true
+        }
+      };
+      return defaults[role] || defaults.kasir;
+    }
+
+    function updatePermStatus(msg) {
+      document.getElementById('permStatus').innerHTML = `<span class="status-ok">${msg}</span>`;
+    }
+
+    function updateSidebarStatus(msg) {
+      document.getElementById('sidebarStatus').innerHTML = `<span class="status-ok">${msg}</span>`;
+    }
+
+    function showResult(role, data) {
+      const visible = [];
+      Object.entries(data.permissions).forEach(([key, val]) => {
+        if (val === true) visible.push(key);
+      });
+
+      document.getElementById('resultBox').innerHTML = `
+Role: ${role.toUpperCase()}<br>
+Nama: ${data.profile.nama}<br>
+Menu yang terlihat: ${visible.length} fitur<br><br>
+${visible.map(v => `  ✅ ${v}`).join('<br>')}
+      `;
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set default theme
+      testTheme('ocean');
+
+      // Cek file loaded
+      const checks = [];
+      checks.push(typeof themeManager !== 'undefined' ? '✅ theme-manager.js' : '❌ theme-manager.js TIDAK DITEMUKAN');
+      checks.push(typeof permManager !== 'undefined' ? '✅ permission-manager.js' : '❌ permission-manager.js TIDAK DITEMUKAN');
+      checks.push(typeof sidebarRenderer !== 'undefined' ? '✅ nav-config.js' : '❌ nav-config.js TIDAK DITEMUKAN');
+
+      console.log('=== PHASE 1 FILE CHECK ===');
+      checks.forEach(c => console.log(c));
+
+      // Auto mock login sebagai kasir untuk demo
+      setTimeout(() => mockLogin('kasir'), 500);
+    });
+  </script>
+</body>
+</html>

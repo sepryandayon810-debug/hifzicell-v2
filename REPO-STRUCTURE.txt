@@ -1,0 +1,85 @@
+📁 REPO WEBPOS (Struktur yang Disarankan)
+═══════════════════════════════════════════
+
+repo-webpos/
+│
+├── 📁 docs/                          ← ⭐ DOKUMENTASI (Upload ke GitHub)
+│   ├── README.md                     ← Penjelasan folder docs
+│   ├── blueprint.md                    ← ⭐ Blueprint lengkap (Markdown)
+│   └── firebase-rules.json           ← ⭐ Security Rules (JSON)
+│
+├── 📁 src/
+│   ├── 📁 js/
+│   │   ├── firebase-config.js        ← ⚠️ JANGAN upload (ada API key)
+│   │   ├── settings-structure.js
+│   │   ├── theme-manager.js
+│   │   ├── auth.js
+│   │   ├── session-manager.js
+│   │   ├── utils.js
+│   │   ├── permission-manager.js     ← ⭐ BARU (dynamic permissions)
+│   │   ├── nav-config.js             ← ⭐ BARU (sidebar render)
+│   │   └── modules/
+│   │       ├── kasir/
+│   │       ├── produk/
+│   │       ├── pembelian/
+│   │       ├── hutang/
+│   │       └── kas/
+│   │
+│   ├── 📁 css/
+│   │   ├── themes.css                ← ⭐ BARU (7 tema + dark mode)
+│   │   ├── main.css
+│   │   └── mobile.css
+│   │
+│   └── 📁 html/
+│       ├── index.html                ← Dashboard
+│       ├── kasir.html
+│       ├── produk.html
+│       ├── pembelian.html
+│       ├── riwayat.html
+│       ├── hutang.html
+│       ├── kas-management.html
+│       ├── laporan-penjualan.html
+│       ├── laporan-stok.html
+│       ├── barang-terlaris.html
+│       ├── saldo-telegram.html
+│       ├── data-pelanggan.html
+│       ├── pengguna.html             ← ⭐ BARU (manajemen user + permissions)
+│       ├── pengaturan.html           ← ⭐ BARU (settings terpusat)
+│       ├── backup.html
+│       ├── log-aktivitas.html
+│       ├── printer-struk.html
+│       ├── reset-data.html
+│       └── login.html
+│
+├── 📁 assets/
+│   ├── images/
+│   └── icons/
+│
+├── 📄 .gitignore                     ← ⭐ PENTING!
+├── 📄 manifest.json                  ← Untuk PWA
+├── 📄 sw.js                          ← Service Worker
+├── 📄 capacitor.config.json          ← Untuk APK
+└── 📄 README.md                      ← Repo utama
+
+
+📄 .gitignore (Isi)
+════════════════════
+# Firebase
+firebase-config.js
+serviceAccountKey.json
+.env
+
+# Node
+node_modules/
+
+# Capacitor
+android/
+ios/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

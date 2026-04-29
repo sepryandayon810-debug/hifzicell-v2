@@ -1,3 +1,4 @@
+
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║     WEBPOS - FIREBASE BLUEPRINT v3.2 (FULL DYNAMIC PERMISSIONS)              ║
 ║         Semua Hak Akses Diatur Owner/Developer via Checkbox                  ║

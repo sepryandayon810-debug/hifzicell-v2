@@ -1,0 +1,98 @@
+/* DARK MODE OVERRIDES — WebPOS V2 */
+/* Style tambahan yang tidak tercover oleh CSS variables */
+
+.dark .sidebar {
+    border-right-color: var(--border);
+}
+
+.dark .topbar {
+    background: var(--card);
+    border-bottom-color: var(--border);
+}
+
+.dark .table-wrap {
+    background: var(--card);
+    border-color: var(--border);
+}
+
+.dark table th {
+    background: var(--surface);
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+    background: var(--surface);
+    color: var(--text);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+.dark .btn-secondary {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+.dark .btn-secondary:hover {
+    background: var(--border);
+}
+
+.dark .nav-group-toggle {
+    color: var(--text);
+}
+
+.dark .nav-link {
+    color: var(--text-muted);
+}
+
+.dark .nav-link:hover:not(.active) {
+    background: var(--surface);
+    color: var(--primary-light);
+}
+
+.dark .sidebar-footer {
+    border-top-color: var(--border);
+}
+
+.dark .btn-logout {
+    border-color: var(--border);
+    color: var(--danger);
+}
+
+.dark .btn-logout:hover {
+    background: rgba(239,68,68,0.1);
+}
+
+.dark .tab-btn {
+    background: var(--card);
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+.dark .tab-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary-light);
+}
+
+.dark .theme-preview {
+    border-color: var(--border);
+}
+
+.dark .info-box {
+    background: var(--surface) !important;
+}
+
+.dark .card:hover {
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+}
+
+/* Receipt preview in dark mode */
+.dark #receipt-preview {
+    background: #fff !important;
+    color: #000 !important;
+}

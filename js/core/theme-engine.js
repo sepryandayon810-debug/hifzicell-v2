@@ -1,44 +1,40 @@
 /**
  * THEME ENGINE — WebPOS V2
- * Mengatur CSS variables dan dark mode.
- * Dipanggil otomatis oleh settings-manager.js
+ * Apply CSS variables dari tema yang dipilih
  */
 
 const ThemeEngine = {
+    themes: {
+        ocean:    { primary:'#0ea5e9', primaryDark:'#0284c7', secondary:'#06b6d4', accent:'#38bdf8' },
+        forest:   { primary:'#10b981', primaryDark:'#047857', secondary:'#84cc16', accent:'#34d399' },
+        sunset:   { primary:'#f97316', primaryDark:'#c2410c', secondary:'#f59e0b', accent:'#fb923c' },
+        midnight: { primary:'#6366f1', primaryDark:'#4338ca', secondary:'#a78bfa', accent:'#818cf8' },
+        cherry:   { primary:'#e11d48', primaryDark:'#be123c', secondary:'#fb7185', accent:'#f43f5e' },
+        lavender: { primary:'#8b5cf6', primaryDark:'#6d28d9', secondary:'#c4b5fd', accent:'#a78bfa' },
+        coffee:   { primary:'#92400e', primaryDark:'#78350f', secondary:'#b45309', accent:'#a16207' },
+        mint:     { primary:'#14b8a6', primaryDark:'#0f766e', secondary:'#2dd4bf', accent:'#5eead4' },
+        coral:    { primary:'#f43f5e', primaryDark:'#be123c', secondary:'#fb7185', accent:'#fda4af' },
+        slate:    { primary:'#475569', primaryDark:'#1e293b', secondary:'#94a3b8', accent:'#64748b' }
+    },
+
     init() {
-        // Cek localStorage untuk FOUC prevention (sebelum Firebase load)
-        const savedTheme = localStorage.getItem('wp_theme') || 'ocean';
-        const savedDark = JSON.parse(localStorage.getItem('wp_dark') || 'false');
-
-        // Preload tema dari localStorage (akan di-override oleh settings-manager nanti)
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = `css/themes/${savedTheme}.css?v=2`;
-        link.setAttribute('data-theme', savedTheme);
-        document.head.appendChild(link);
-
-        if (savedDark) document.documentElement.classList.add('dark');
+        const saved = window._appSettings?.app?.theme || 'ocean';
+        this.apply(saved);
     },
 
-    // Fungsi tambahan untuk toggle dark mode tanpa reload
-    toggleDarkMode() {
-        const isDark = document.documentElement.classList.toggle('dark');
-        SettingsManager.set('app/darkMode', isDark);
-        localStorage.setItem('wp_dark', JSON.stringify(isDark));
-        return isDark;
+    apply(themeName) {
+        const t = this.themes[themeName] || this.themes.ocean;
+        const root = document.documentElement;
+        root.style.setProperty('--primary', t.primary);
+        root.style.setProperty('--primary-dark', t.primaryDark);
+        root.style.setProperty('--secondary', t.secondary);
+        root.style.setProperty('--accent', t.accent);
+        root.setAttribute('data-theme-color', themeName);
     },
 
-    // Preview tema tanpa simpan
-    previewTheme(themeName) {
-        document.querySelectorAll('link[data-theme]').forEach(el => el.remove());
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = `css/themes/${themeName}.css?v=2`;
-        link.setAttribute('data-theme', themeName);
-        document.head.appendChild(link);
+    preview(themeName) {
+        this.apply(themeName);
     }
 };
 
-// Auto-init FOUC prevention
-ThemeEngine.init();
 window.ThemeEngine = ThemeEngine;

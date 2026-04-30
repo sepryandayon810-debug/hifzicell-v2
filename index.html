@@ -1,787 +1,740 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WebPOS V2</title>
-    <!-- V2 Core CSS -->
-    <link rel="stylesheet" href="css/core/variables.css">
-    <link rel="stylesheet" href="css/core/layout.css">
-    <link rel="stylesheet" href="css/core/darkmode.css">
-    <link rel="stylesheet" href="css/core/responsive.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <style>
-    /* ===== GLASSMORPHISM AUTH — Uses CSS Variables ===== */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0ea5e9">
+  <title>WebPOS V2</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="css/core/variables.css">
+  <link rel="stylesheet" href="css/core/layout.css">
+  <link rel="stylesheet" href="css/core/darkmode.css">
+  <link rel="stylesheet" href="css/core/responsive.css">
+
+  <style>
+    /* ===== GLASSMORPHISM AUTH ===== */
     .auth-page {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
-        position: relative;
-        overflow: hidden;
-        transition: background 0.5s ease;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent, var(--primary-dark)) 100%);
+      transition: background 0.5s ease;
     }
 
-    /* Animated shapes using theme colors */
-    .auth-bg-shapes {
-        position: fixed;
-        inset: 0;
-        overflow: hidden;
-        z-index: 0;
-        pointer-events: none;
+    .bg-shapes {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.5;
+      animation: float 20s infinite ease-in-out;
+    }
+    .shape-1 {
+      width: 400px; height: 400px;
+      background: linear-gradient(135deg, var(--secondary, #ec4899), var(--primary));
+      top: -100px; left: -100px;
+    }
+    .shape-2 {
+      width: 300px; height: 300px;
+      background: linear-gradient(135deg, var(--accent, #00f2fe), var(--primary));
+      bottom: -50px; right: -50px;
+      animation-delay: -5s;
+    }
+    @keyframes float {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(30px,-30px) scale(1.1); }
+      66% { transform: translate(-20px,20px) scale(0.9); }
     }
 
-    .auth-shape {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.5;
-        animation: authFloat 20s infinite ease-in-out;
+    .glass-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      padding: 2.5rem;
+      animation: slideUp 0.6s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .auth-shape-1 {
-        width: 400px; height: 400px;
-        background: var(--secondary);
-        top: -100px; left: -100px;
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 2rem;
     }
-    .auth-shape-2 {
-        width: 300px; height: 300px;
-        background: var(--primary-dark);
-        bottom: -50px; right: -50px;
-        animation-delay: -7s;
+    .auth-logo-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary, #ec4899));
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      animation: pulse 2s infinite;
     }
-    .auth-shape-3 {
-        width: 250px; height: 250px;
-        background: var(--accent);
-        top: 50%; left: 50%;
-        transform: translate(-50%, -50%);
-        animation-delay: -14s;
+    @keyframes pulse {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .auth-logo-icon i { font-size: 2rem; color: white; }
+    .auth-logo h1 { font-size: 1.6rem; font-weight: 800; color: white; }
+    .auth-logo p { font-size: 0.875rem; color: rgba(255,255,255,0.85); margin-top: 0.25rem; }
+
+    .auth-form .form-group { margin-bottom: 1.25rem; }
+    .auth-form .form-label {
+      display: block; font-size: 0.875rem; font-weight: 600;
+      color: rgba(255,255,255,0.9); margin-bottom: 0.5rem;
+    }
+    .auth-form .input-wrapper { position: relative; }
+    .auth-form .input-icon {
+      position: absolute; left: 1rem; top: 50%; transform: translateY(-50%);
+      color: rgba(255,255,255,0.6); font-size: 0.9rem;
+    }
+    .auth-form .form-input, .auth-form .form-select {
+      width: 100%; padding: 0.875rem 1rem 0.875rem 2.75rem;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px; color: white; font-size: 0.875rem;
+      font-family: inherit; transition: all 0.2s;
+    }
+    .auth-form .form-input::placeholder { color: rgba(255,255,255,0.5); }
+    .auth-form .form-input:focus, .auth-form .form-select:focus {
+      outline: none; background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.4);
+    }
+    .auth-form .form-select { padding-left: 1rem; cursor: pointer; }
+    .auth-form .form-select option { background: #1e293b; color: white; }
+
+    .password-toggle {
+      position: absolute; right: 1rem; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: rgba(255,255,255,0.6);
+      cursor: pointer; font-size: 1rem; transition: color 0.2s;
+    }
+    .password-toggle:hover { color: white; }
+
+    .hint { font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-top: 0.25rem; }
+
+    .btn-glass {
+      width: 100%; padding: 1rem;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15));
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px; color: white; font-size: 0.875rem;
+      font-weight: 700; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; gap: 0.5rem;
+      transition: all 0.3s; backdrop-filter: blur(10px);
+    }
+    .btn-glass:hover:not(:disabled) {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0.25));
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+    .btn-glass:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white; border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .auth-link {
+      text-align: center; margin-top: 1.5rem;
+      color: rgba(255,255,255,0.85); font-size: 0.875rem;
+    }
+    .auth-link a {
+      color: white; font-weight: 700; text-decoration: none;
+      border-bottom: 1px solid transparent; transition: border 0.2s;
+    }
+    .auth-link a:hover { border-bottom-color: white; }
+
+    .alert-glass {
+      padding: 0.875rem 1rem; border-radius: 12px; margin-bottom: 1rem;
+      font-size: 0.875rem; display: flex; align-items: center; gap: 0.75rem;
+      animation: slideUp 0.3s ease; backdrop-filter: blur(10px);
+    }
+    .alert-error {
+      background: rgba(239,68,68,0.25); border: 1px solid rgba(239,68,68,0.4); color: #fecaca;
+    }
+    .alert-success {
+      background: rgba(16,185,129,0.25); border: 1px solid rgba(16,185,129,0.4); color: #a7f3d0;
     }
 
-    @keyframes authFloat {
-        0%, 100% { transform: translate(0, 0) scale(1); }
-        33% { transform: translate(30px, -30px) scale(1.1); }
-        66% { transform: translate(-20px, 20px) scale(0.9); }
-    }
-
-    .auth-card {
-        width: 100%;
-        max-width: 440px;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-        padding: 40px 32px;
-        position: relative;
-        z-index: 1;
-        animation: authSlideUp 0.6s ease;
-    }
-
-    @keyframes authSlideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .auth-brand {
-        text-align: center;
-        margin-bottom: 28px;
-    }
-
-    .auth-brand-icon {
-        width: 72px; height: 72px;
-        border-radius: 20px;
-        background: linear-gradient(135deg, var(--primary), var(--accent));
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-size: 32px;
-        margin-bottom: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        animation: authPulse 2s ease infinite;
-    }
-
-    @keyframes authPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-
-    .auth-brand h1 {
-        font-size: 26px;
-        font-weight: 800;
-        color: #fff;
-        margin-bottom: 6px;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .auth-brand p {
-        font-size: 14px;
-        color: rgba(255,255,255,0.85);
-    }
-
-    .auth-form {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .auth-input-group {
-        position: relative;
-    }
-
-    .auth-input-group label {
-        display: block;
-        font-size: 12px;
-        font-weight: 700;
-        color: rgba(255,255,255,0.9);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 6px;
-    }
-
-    .auth-input-group input,
-    .auth-input-group select {
-        width: 100%;
-        padding: 12px 14px 12px 42px;
-        font-size: 15px;
-        font-family: inherit;
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 12px;
-        background: rgba(255,255,255,0.12);
-        color: #fff;
-        transition: all 0.2s;
-        outline: none;
-    }
-
-    .auth-input-group input::placeholder,
-    .auth-input-group select option {
-        color: rgba(255,255,255,0.55);
-    }
-
-    .auth-input-group input:focus,
-    .auth-input-group select:focus {
-        background: rgba(255,255,255,0.2);
-        border-color: rgba(255,255,255,0.5);
-        box-shadow: 0 0 0 4px rgba(255,255,255,0.1);
-    }
-
-    .auth-input-group .input-icon {
-        position: absolute;
-        left: 14px;
-        bottom: 14px;
-        color: rgba(255,255,255,0.6);
-        font-size: 16px;
-        pointer-events: none;
-    }
-
-    .auth-input-group .password-toggle {
-        position: absolute;
-        right: 12px;
-        bottom: 10px;
-        background: none;
-        border: none;
-        color: rgba(255,255,255,0.6);
-        cursor: pointer;
-        font-size: 16px;
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .auth-input-group .password-toggle:hover {
-        color: #fff;
-    }
-
-    .auth-input-group .input-hint {
-        font-size: 11px;
-        color: rgba(255,255,255,0.6);
-        margin-top: 4px;
-    }
-
-    .auth-error {
-        display: none;
-        background: rgba(239,68,68,0.2);
-        border: 1px solid rgba(239,68,68,0.35);
-        color: #fecaca;
-        padding: 12px 14px;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 500;
-        animation: authShake 0.4s ease;
-    }
-
-    .auth-error.show {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    @keyframes authShake {
-        0%, 100% { transform: translateX(0); }
-        20% { transform: translateX(-6px); }
-        40% { transform: translateX(6px); }
-        60% { transform: translateX(-4px); }
-        80% { transform: translateX(4px); }
-    }
-
-    .auth-btn {
-        width: 100%;
-        padding: 14px;
-        font-size: 15px;
-        font-weight: 700;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        transition: all 0.3s;
-        margin-top: 4px;
-    }
-
-    .auth-btn-primary {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-        color: #fff;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
-    .auth-btn-primary:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-    }
-
-    .auth-btn-primary:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-
-    .auth-spinner {
-        width: 18px; height: 18px;
-        border: 2px solid rgba(255,255,255,0.3);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.8s linear infinite;
-        display: none;
-    }
-
-    .auth-btn.loading .auth-spinner {
-        display: block;
-    }
-
-    .auth-btn.loading .btn-text {
-        opacity: 0.8;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    .auth-footer {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 13px;
-        color: rgba(255,255,255,0.8);
-    }
-
-    .auth-footer a {
-        color: #fff;
-        font-weight: 700;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .auth-footer a:hover {
-        text-decoration: underline;
-    }
-
-    .auth-version {
-        text-align: center;
-        margin-top: 16px;
-        font-size: 11px;
-        color: rgba(255,255,255,0.45);
-    }
-
-    /* Role Selector */
     .role-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
     }
-
     .role-option {
-        position: relative;
+      position: relative; cursor: pointer;
     }
-
-    .role-option input {
-        position: absolute;
-        opacity: 0;
+    .role-option input { position: absolute; opacity: 0; }
+    .role-box {
+      padding: 0.75rem; border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      text-align: center; transition: all 0.2s;
     }
-
-    .role-option label {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 12px;
-        border: 1px solid rgba(255,255,255,0.25);
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 600;
-        color: rgba(255,255,255,0.8);
-        background: rgba(255,255,255,0.08);
-        transition: all 0.2s;
+    .role-option input:checked + .role-box {
+      border-color: rgba(255,255,255,0.6);
+      background: rgba(255,255,255,0.2);
     }
-
-    .role-option input:checked + label {
-        border-color: rgba(255,255,255,0.6);
-        background: rgba(255,255,255,0.2);
-        color: #fff;
-    }
-
-    .role-option label:hover {
-        background: rgba(255,255,255,0.15);
-    }
-
     .role-dot {
-        width: 10px; height: 10px;
-        border-radius: 50%;
-        display: inline-block;
+      width: 14px; height: 14px; border-radius: 50%;
+      margin: 0 auto 0.5rem; box-shadow: 0 0 10px currentColor;
     }
+    .role-kasir { color: #10b981; background: #10b981; }
+    .role-admin { color: #3b82f6; background: #3b82f6; }
+    .role-owner { color: #f59e0b; background: #f59e0b; }
+    .role-developer { color: #8b5cf6; background: #8b5cf6; }
+    .role-label { font-size: 0.8rem; font-weight: 600; color: white; }
 
-    .dot-developer { background: #8b5cf6; box-shadow: 0 0 6px #8b5cf6; }
-    .dot-owner { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
-    .dot-admin { background: #0ea5e9; box-shadow: 0 0 6px #0ea5e9; }
-    .dot-kasir { background: #10b981; box-shadow: 0 0 6px #10b981; }
+    .hidden { display: none !important; }
 
-    /* Dark mode adjustments for glass card */
-    .dark .auth-card {
-        background: rgba(30, 41, 59, 0.4);
-        border-color: rgba(255,255,255,0.1);
-    }
+    /* ===== DASHBOARD (shown after login) ===== */
+    #dashboardView { display: none; }
 
-    @media (max-width: 480px) {
-        .auth-card { padding: 28px 20px; }
-        .auth-brand-icon { width: 60px; height: 60px; font-size: 24px; }
-        .auth-brand h1 { font-size: 22px; }
-        .role-grid { grid-template-columns: 1fr 1fr; }
-    }
-    </style>
+    /* Role badge colors */
+    .badge-kasir { background: rgba(16,185,129,0.15); color: #10b981; }
+    .badge-admin { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .badge-owner { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .badge-developer { background: rgba(139,92,246,0.15); color: #8b5cf6; }
+  </style>
 <base target="_blank">
 </head>
 <body>
-    <!-- ==================== LOGIN VIEW ==================== -->
-    <div id="login-view" class="auth-page" style="display:none;">
-        <div class="auth-bg-shapes">
-            <div class="auth-shape auth-shape-1"></div>
-            <div class="auth-shape auth-shape-2"></div>
-            <div class="auth-shape auth-shape-3"></div>
-        </div>
-        <div class="auth-card">
-            <div class="auth-brand">
-                <div class="auth-brand-icon"><i class="fas fa-cash-register"></i></div>
-                <h1>WebPOS V2</h1>
-                <p>Masuk untuk mengelola toko Anda</p>
-            </div>
 
-            <div class="auth-error" id="login-error">
-                <i class="fas fa-exclamation-circle"></i>
-                <span></span>
-            </div>
-
-            <form class="auth-form" id="login-form" onsubmit="return false;">
-                <div class="auth-input-group">
-                    <label>Email</label>
-                    <i class="fas fa-envelope input-icon"></i>
-                    <input type="email" id="login-email" placeholder="admin@toko.com" autocomplete="email">
-                </div>
-
-                <div class="auth-input-group">
-                    <label>Password</label>
-                    <i class="fas fa-lock input-icon"></i>
-                    <input type="password" id="login-password" placeholder="Min. 6 karakter" autocomplete="current-password">
-                    <button type="button" class="password-toggle" onclick="togglePassword('login-password', this)" title="Tampilkan/Sembunyikan">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-
-                <button type="submit" class="auth-btn auth-btn-primary" id="btn-login" onclick="doLogin()">
-                    <div class="auth-spinner"></div>
-                    <span class="btn-text">Masuk</span>
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                Belum punya akun? <a onclick="showView('register')">Daftar Sekarang</a>
-            </div>
-            <div class="auth-version">WebPOS V2.0.0</div>
-        </div>
+  <!-- ==================== AUTH VIEW ==================== -->
+  <div id="authView" class="auth-page">
+    <div class="bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
     </div>
 
-    <!-- ==================== REGISTER VIEW ==================== -->
-    <div id="register-view" class="auth-page" style="display:none;">
-        <div class="auth-bg-shapes">
-            <div class="auth-shape auth-shape-1"></div>
-            <div class="auth-shape auth-shape-2"></div>
-            <div class="auth-shape auth-shape-3"></div>
+    <!-- LOGIN CARD -->
+    <div id="loginCard" class="glass-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon"><i class="fas fa-cash-register"></i></div>
+        <h1>WebPOS V2</h1>
+        <p>Masuk ke sistem kasir Anda</p>
+      </div>
+
+      <div id="loginAlert"></div>
+
+      <form id="loginForm" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <div class="input-wrapper">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" class="form-input" id="loginUsername" placeholder="Masukkan username" required autocomplete="username">
+          </div>
         </div>
-        <div class="auth-card">
-            <div class="auth-brand">
-                <div class="auth-brand-icon" style="background:linear-gradient(135deg, var(--accent), var(--secondary));">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <h1>Daftar Akun</h1>
-                <p>Buat akun untuk toko baru</p>
-            </div>
 
-            <div class="auth-error" id="reg-error">
-                <i class="fas fa-exclamation-circle"></i>
-                <span></span>
-            </div>
-
-            <form class="auth-form" id="reg-form" onsubmit="return false;">
-                <div class="auth-input-group">
-                    <label>Nama Lengkap</label>
-                    <i class="fas fa-user input-icon"></i>
-                    <input type="text" id="reg-name" placeholder="Budi Santoso" autocomplete="name">
-                </div>
-
-                <div class="auth-input-group">
-                    <label>Email</label>
-                    <i class="fas fa-envelope input-icon"></i>
-                    <input type="email" id="reg-email" placeholder="admin@toko.com" autocomplete="email">
-                </div>
-
-                <div class="auth-input-group">
-                    <label>Password</label>
-                    <i class="fas fa-lock input-icon"></i>
-                    <input type="password" id="reg-password" placeholder="Min. 6 karakter" autocomplete="new-password">
-                    <button type="button" class="password-toggle" onclick="togglePassword('reg-password', this)" title="Tampilkan/Sembunyikan">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <div class="input-hint">Password minimal 6 karakter</div>
-                </div>
-
-                <div class="auth-input-group">
-                    <label>Pilih Role</label>
-                    <div class="role-grid">
-                        <div class="role-option">
-                            <input type="radio" name="reg-role" id="role-kasir" value="kasir" checked>
-                            <label for="role-kasir">
-                                <span class="role-dot dot-kasir"></span>Kasir
-                            </label>
-                        </div>
-                        <div class="role-option">
-                            <input type="radio" name="reg-role" id="role-admin" value="admin">
-                            <label for="role-admin">
-                                <span class="role-dot dot-admin"></span>Admin
-                            </label>
-                        </div>
-                        <div class="role-option">
-                            <input type="radio" name="reg-role" id="role-owner" value="owner">
-                            <label for="role-owner">
-                                <span class="role-dot dot-owner"></span>Owner
-                            </label>
-                        </div>
-                        <div class="role-option">
-                            <input type="radio" name="reg-role" id="role-developer" value="developer">
-                            <label for="role-developer">
-                                <span class="role-dot dot-developer"></span>Dev
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="auth-btn auth-btn-primary" id="btn-register" onclick="doRegister()">
-                    <div class="auth-spinner"></div>
-                    <span class="btn-text">Buat Akun</span>
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                Sudah punya akun? <a onclick="showView('login')">Masuk di sini</a>
-            </div>
-            <div class="auth-version">WebPOS V2.0.0</div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" class="form-input" id="loginPassword" placeholder="Masukkan password" required>
+            <button type="button" class="password-toggle" id="toggleLoginPassword">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
         </div>
+
+        <button type="submit" class="btn-glass" id="loginBtn">
+          <i class="fas fa-sign-in-alt"></i><span>Masuk</span>
+        </button>
+      </form>
+
+      <div class="auth-link">
+        Belum punya akun? <a href="#" id="showRegister">Daftar sekarang</a>
+      </div>
     </div>
 
-    <!-- ==================== DASHBOARD VIEW ==================== -->
-    <div id="dashboard-view" style="display:none;">
-        <div class="app-container">
-            <aside class="sidebar" id="sidebar"></aside>
-            <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    <!-- REGISTER CARD -->
+    <div id="registerCard" class="glass-card hidden">
+      <div class="auth-logo">
+        <div class="auth-logo-icon"><i class="fas fa-user-plus"></i></div>
+        <h1>Daftar Akun</h1>
+        <p>Buat akun WebPOS baru</p>
+      </div>
 
-            <main class="main-content">
-                <header class="topbar">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <button class="mobile-toggle" onclick="toggleSidebar()">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                        </button>
-                        <h1 class="topbar-title">📊 Dashboard</h1>
-                    </div>
-                    <div class="topbar-actions">
-                        <span class="badge badge-info" data-user-role>-</span>
-                    </div>
-                </header>
+      <div id="registerAlert"></div>
 
-                <div class="page-content">
-                    <div class="cards-grid">
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-title">Penjualan Hari Ini</span>
-                                <span style="color:var(--success);">💰</span>
-                            </div>
-                            <div class="card-value" id="stat-sales">Rp 0</div>
-                            <div class="card-delta up" id="stat-sales-delta">+0% vs kemarin</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-title">Transaksi</span>
-                                <span style="color:var(--primary);">🛒</span>
-                            </div>
-                            <div class="card-value" id="stat-transactions">0</div>
-                            <div class="card-delta up" id="stat-trans-delta">+0 hari ini</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-title">Produk Terjual</span>
-                                <span style="color:var(--warning);">📦</span>
-                            </div>
-                            <div class="card-value" id="stat-products">0</div>
-                            <div class="card-delta" style="color:var(--text-muted);">item terjual</div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="card-title">Kas Tersedia</span>
-                                <span style="color:var(--danger);">💵</span>
-                            </div>
-                            <div class="card-value" id="stat-cash">Rp 0</div>
-                            <div class="card-delta" style="color:var(--text-muted);">saldo kasir</div>
-                        </div>
-                    </div>
-
-                    <div class="card" style="margin-bottom:20px;">
-                        <h3 style="font-size:16px;margin-bottom:16px;">⚡ Akses Cepat</h3>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;">
-                            <a href="kasir.html" class="btn btn-primary" style="text-decoration:none;text-align:center;">🧾 Kasir</a>
-                            <a href="produk.html" class="btn btn-secondary" style="text-decoration:none;text-align:center;">📦 Produk</a>
-                            <a href="riwayat.html" class="btn btn-secondary" style="text-decoration:none;text-align:center;">📜 Riwayat</a>
-                            <a href="pengaturan.html" class="btn btn-secondary" style="text-decoration:none;text-align:center;">⚙️ Setting</a>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                            <h3 style="font-size:16px;">🕐 Transaksi Terakhir</h3>
-                            <a href="riwayat.html" style="font-size:13px;color:var(--primary);text-decoration:none;font-weight:600;">Lihat Semua →</a>
-                        </div>
-                        <div class="table-wrap">
-                            <table>
-                                <thead>
-                                    <tr><th>Waktu</th><th>No. Transaksi</th><th>Total</th><th>Status</th></tr>
-                                </thead>
-                                <tbody id="recent-transactions">
-                                    <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Memuat data...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </main>
+      <form id="registerForm" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <div class="input-wrapper">
+            <i class="fas fa-at input-icon"></i>
+            <input type="text" class="form-input" id="regUsername" placeholder="contoh: johndoe" required autocomplete="off">
+          </div>
+          <div class="hint">Hanya huruf, angka, dan underscore. Min 3 karakter.</div>
         </div>
+
+        <div class="form-group">
+          <label class="form-label">Nama Lengkap</label>
+          <div class="input-wrapper">
+            <i class="fas fa-id-card input-icon"></i>
+            <input type="text" class="form-input" id="regName" placeholder="Masukkan nama lengkap" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email <small style="opacity:0.7">(Opsional)</small></label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" class="form-input" id="regEmail" placeholder="email@example.com">
+          </div>
+          <div class="hint">Untuk keperluan reset password oleh owner</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" class="form-input" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6">
+            <button type="button" class="password-toggle" id="toggleRegPassword">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Konfirmasi Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" class="form-input" id="regConfirm" placeholder="Ulangi password" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Pilih Role</label>
+          <div class="role-grid">
+            <label class="role-option">
+              <input type="radio" name="regRole" value="kasir" checked>
+              <div class="role-box">
+                <div class="role-dot role-kasir"></div>
+                <div class="role-label">Kasir</div>
+              </div>
+            </label>
+            <label class="role-option">
+              <input type="radio" name="regRole" value="admin">
+              <div class="role-box">
+                <div class="role-dot role-admin"></div>
+                <div class="role-label">Admin</div>
+              </div>
+            </label>
+            <label class="role-option">
+              <input type="radio" name="regRole" value="owner">
+              <div class="role-box">
+                <div class="role-dot role-owner"></div>
+                <div class="role-label">Owner</div>
+              </div>
+            </label>
+            <label class="role-option">
+              <input type="radio" name="regRole" value="developer">
+              <div class="role-box">
+                <div class="role-dot role-developer"></div>
+                <div class="role-label">Developer</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-glass" id="registerBtn">
+          <i class="fas fa-user-plus"></i><span>Daftar</span>
+        </button>
+      </form>
+
+      <div class="auth-link">
+        Sudah punya akun? <a href="#" id="showLogin">Masuk sekarang</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DASHBOARD VIEW ==================== -->
+  <div id="dashboardView">
+    <div class="app-container">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="logo-container">
+            <div class="logo-icon"><i class="fas fa-cash-register"></i></div>
+            <span class="logo-text">WebPOS</span>
+          </div>
+        </div>
+
+        <div class="sidebar-search">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" placeholder="Cari menu..." id="menuSearch">
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" id="sidebarNav">
+          <!-- Menu di-render oleh JS -->
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="user-profile" id="userProfile">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">User</div>
+              <span class="badge" id="userRoleBadge">Kasir</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="main-header">
+          <div class="header-left">
+            <button class="btn-icon d-md-none" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            <h1 class="header-title" id="pageTitle">Dashboard</h1>
+          </div>
+          <div class="header-actions">
+            <button class="btn-icon" id="darkModeToggle" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
+            <button class="btn-icon" id="logoutBtn" title="Keluar"><i class="fas fa-sign-out-alt"></i></button>
+          </div>
+        </header>
+
+        <div class="page-content">
+          <!-- Stats Cards -->
+          <div class="stats-grid" id="statsGrid">
+            <div class="stat-card clickable" data-page="kasir.html">
+              <div class="stat-icon" style="background:rgba(14,165,233,0.15);color:#0ea5e9"><i class="fas fa-cash-register"></i></div>
+              <div class="stat-info"><div class="stat-value" id="statSales">Rp 0</div><div class="stat-label">Penjualan Hari Ini</div></div>
+            </div>
+            <div class="stat-card clickable" data-page="produk.html">
+              <div class="stat-icon" style="background:rgba(16,185,129,0.15);color:#10b981"><i class="fas fa-box"></i></div>
+              <div class="stat-info"><div class="stat-value" id="statProducts">0</div><div class="stat-label">Total Produk</div></div>
+            </div>
+            <div class="stat-card clickable" data-page="pembelian.html">
+              <div class="stat-icon" style="background:rgba(245,158,11,0.15);color:#f59e0b"><i class="fas fa-shopping-cart"></i></div>
+              <div class="stat-info"><div class="stat-value" id="statPurchases">Rp 0</div><div class="stat-label">Pembelian Hari Ini</div></div>
+            </div>
+            <div class="stat-card clickable" data-page="riwayat.html">
+              <div class="stat-icon" style="background:rgba(139,92,246,0.15);color:#8b5cf6"><i class="fas fa-history"></i></div>
+              <div class="stat-info"><div class="stat-value" id="statTransactions">0</div><div class="stat-label">Transaksi Hari Ini</div></div>
+            </div>
+          </div>
+
+          <!-- Quick Section -->
+          <div class="card" style="margin-top:1.5rem">
+            <div class="card-header"><div class="card-title"><i class="fas fa-bolt"></i> Akses Cepat</div></div>
+            <div class="card-body">
+              <div class="quick-grid" id="quickGrid">
+                <!-- Render by JS based on role -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
-    <!-- V2 Core Scripts -->
-    <script src="js/core/firebase-config.js"></script>
-    <script src="js/core/utils.js"></script>
-    <script src="js/core/db.js"></script>
-    <script src="js/core/auth.js"></script>
-    <script src="js/core/settings-manager.js"></script>
-    <script src="js/core/theme-engine.js"></script>
-    <script src="js/core/sidebar.js"></script>
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-nav" id="mobileNav">
+      <a href="kasir.html" class="mobile-nav-item"><i class="fas fa-cash-register"></i><span>Kasir</span></a>
+      <a href="produk.html" class="mobile-nav-item"><i class="fas fa-box"></i><span>Produk</span></a>
+      <a href="riwayat.html" class="mobile-nav-item"><i class="fas fa-history"></i><span>Riwayat</span></a>
+      <a href="pengaturan.html" class="mobile-nav-item"><i class="fas fa-cog"></i><span>Setting</span></a>
+    </nav>
+  </div>
 
-    <script>
-    let currentView = 'login';
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-    async function init() {
-        await Auth.init();
+  <!-- Core JS -->
+  <script src="js/core/firebase-config.js"></script>
+  <script src="js/core/utils.js"></script>
+  <script src="js/core/db.js"></script>
+  <script src="js/core/auth.js"></script>
+  <script src="js/core/settings-manager.js"></script>
+  <script src="js/core/theme-engine.js"></script>
 
-        if (Auth.getCurrentUser()) {
-            await initApp();
-            showView('dashboard');
-            loadDashboardData();
-        } else {
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('mode') === 'register') showView('register');
-            else showView('login');
-        }
-    }
-
-    function showView(view) {
-        currentView = view;
-        document.getElementById('login-view').style.display = view === 'login' ? 'flex' : 'none';
-        document.getElementById('register-view').style.display = view === 'register' ? 'flex' : 'none';
-        document.getElementById('dashboard-view').style.display = view === 'dashboard' ? 'block' : 'none';
-
-        document.getElementById('login-error').classList.remove('show');
-        document.getElementById('reg-error').classList.remove('show');
-
-        setTimeout(() => {
-            const firstInput = document.querySelector(`#${view}-view input:not([type="radio"])`);
-            if (firstInput) firstInput.focus();
-        }, 100);
-    }
-
-    function togglePassword(inputId, btn) {
-        const input = document.getElementById(inputId);
-        const isHidden = input.type === 'password';
-        input.type = isHidden ? 'text' : 'password';
-        btn.innerHTML = isHidden
-            ? '<i class="fas fa-eye-slash"></i>'
-            : '<i class="fas fa-eye"></i>';
-    }
-
-    function setLoading(btnId, loading) {
-        const btn = document.getElementById(btnId);
-        if (loading) {
-            btn.classList.add('loading');
-            btn.disabled = true;
-        } else {
-            btn.classList.remove('loading');
-            btn.disabled = false;
-        }
-    }
-
-    function showError(elId, message) {
-        const el = document.getElementById(elId);
-        el.querySelector('span').textContent = message;
-        el.classList.add('show');
-        el.style.animation = 'none';
-        el.offsetHeight;
-        el.style.animation = '';
-    }
-
-    function hideError(elId) {
-        document.getElementById(elId).classList.remove('show');
-    }
-
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    async function doLogin() {
-        const email = document.getElementById('login-email').value.trim();
-        const pass = document.getElementById('login-password').value;
-
-        hideError('login-error');
-
-        if (!email) { showError('login-error', 'Email wajib diisi'); document.getElementById('login-email').focus(); return; }
-        if (!isValidEmail(email)) { showError('login-error', 'Format email tidak valid'); document.getElementById('login-email').focus(); return; }
-        if (!pass) { showError('login-error', 'Password wajib diisi'); document.getElementById('login-password').focus(); return; }
-        if (pass.length < 6) { showError('login-error', 'Password minimal 6 karakter'); document.getElementById('login-password').focus(); return; }
-
-        setLoading('btn-login', true);
-        const res = await Auth.login(email, pass);
-        setLoading('btn-login', false);
-
-        if (res.success) {
-            window.location.reload();
-        } else {
-            showError('login-error', res.error);
-        }
-    }
-
-    async function doRegister() {
-        const name = document.getElementById('reg-name').value.trim();
-        const email = document.getElementById('reg-email').value.trim();
-        const pass = document.getElementById('reg-password').value;
-        const role = document.querySelector('input[name="reg-role"]:checked').value;
-
-        hideError('reg-error');
-
-        if (!name) { showError('reg-error', 'Nama lengkap wajib diisi'); document.getElementById('reg-name').focus(); return; }
-        if (name.length < 3) { showError('reg-error', 'Nama minimal 3 karakter'); document.getElementById('reg-name').focus(); return; }
-        if (!email) { showError('reg-error', 'Email wajib diisi'); document.getElementById('reg-email').focus(); return; }
-        if (!isValidEmail(email)) { showError('reg-error', 'Format email tidak valid'); document.getElementById('reg-email').focus(); return; }
-        if (!pass) { showError('reg-error', 'Password wajib diisi'); document.getElementById('reg-password').focus(); return; }
-        if (pass.length < 6) { showError('reg-error', 'Password minimal 6 karakter'); document.getElementById('reg-password').focus(); return; }
-
-        setLoading('btn-register', true);
-        const res = await Auth.register(email, pass, { name, role });
-        setLoading('btn-register', false);
-
-        if (res.success) {
-            Utils.toast('Akun berhasil dibuat! Silakan masuk.', 'success');
-            document.getElementById('login-email').value = email;
-            document.getElementById('login-password').value = '';
-            showView('login');
-        } else {
-            showError('reg-error', res.error);
-        }
-    }
-
-    async function loadDashboardData() {
-        const today = Utils.getDateKey();
-        try {
-            const todayData = await DB.get(`finance/${today}`);
-            const sales = todayData?.salesTotal || 0;
-            document.getElementById('stat-sales').textContent = Utils.formatRupiah(sales);
-
-            const trans = await DB.query('transactions', { orderByChild: 'dateKey', equalTo: today });
-            const count = trans ? Object.keys(trans).length : 0;
-            document.getElementById('stat-transactions').textContent = count;
-
-            const cash = (todayData?.openingBalance || 0) + sales - (todayData?.purchasesTotal || 0) - (todayData?.withdrawals || 0) + (todayData?.topups || 0);
-            document.getElementById('stat-cash').textContent = Utils.formatRupiah(cash);
-
-            const recent = await DB.query('transactions', { orderByChild: 'dateKey', equalTo: today, limitToLast: 5 });
-            const tbody = document.getElementById('recent-transactions');
-            if (!recent) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada transaksi hari ini</td></tr>';
-                return;
-            }
-            const rows = Object.entries(recent).reverse().map(([id, t]) => `
-                <tr>
-                    <td>${Utils.formatDate(t.timestamp, true)}</td>
-                    <td>${id.slice(-6).toUpperCase()}</td>
-                    <td style="font-weight:600;">${Utils.formatRupiah(t.total)}</td>
-                    <td><span class="badge badge-success">${t.status || 'completed'}</span></td>
-                </tr>
-            `).join('');
-            tbody.innerHTML = rows;
-        } catch (err) {
-            console.error('Dashboard load error:', err);
-        }
-    }
-
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('sidebarOverlay').classList.toggle('active');
-    }
-    function closeSidebar() {
-        document.getElementById('sidebar').classList.remove('open');
-        document.getElementById('sidebarOverlay').classList.remove('active');
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            if (currentView === 'login') doLogin();
-            if (currentView === 'register') doRegister();
-        }
+  <script>
+    // ===== AUTH UI TOGGLE =====
+    const loginCard = document.getElementById('loginCard');
+    const registerCard = document.getElementById('registerCard');
+    document.getElementById('showRegister').addEventListener('click', e => {
+      e.preventDefault();
+      loginCard.classList.add('hidden');
+      registerCard.classList.remove('hidden');
+      document.getElementById('regUsername').focus();
+    });
+    document.getElementById('showLogin').addEventListener('click', e => {
+      e.preventDefault();
+      registerCard.classList.add('hidden');
+      loginCard.classList.remove('hidden');
+      document.getElementById('loginUsername').focus();
     });
 
-    init();
-    </script>
+    // Password toggles
+    document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+      const inp = document.getElementById('loginPassword');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      this.querySelector('i').className = inp.type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+    });
+    document.getElementById('toggleRegPassword').addEventListener('click', function() {
+      const inp = document.getElementById('regPassword');
+      const inp2 = document.getElementById('regConfirm');
+      const type = inp.type === 'password' ? 'text' : 'password';
+      inp.type = type; inp2.type = type;
+      this.querySelector('i').className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+    });
+
+    // ===== LOGIN =====
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const alertBox = document.getElementById('loginAlert');
+
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div><span>Memuat...</span>';
+
+      const res = await Auth.login(username, password);
+      if (!res.success) {
+        alertBox.innerHTML = `<div class="alert-glass alert-error"><i class="fas fa-exclamation-circle"></i><span>${res.error}</span></div>`;
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i><span>Masuk</span>';
+        setTimeout(() => alertBox.innerHTML = '', 5000);
+      }
+    });
+
+    // ===== REGISTER =====
+    document.getElementById('registerForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn = document.getElementById('registerBtn');
+      const alertBox = document.getElementById('registerAlert');
+
+      const username = document.getElementById('regUsername').value.trim().toLowerCase();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regConfirm').value;
+      const role = document.querySelector('input[name="regRole"]:checked').value;
+
+      if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+        alertBox.innerHTML = `<div class="alert-glass alert-error"><i class="fas fa-exclamation-circle"></i><span>Username hanya huruf kecil, angka, underscore. 3-20 karakter.</span></div>`;
+        return;
+      }
+      if (password !== confirm) {
+        alertBox.innerHTML = `<div class="alert-glass alert-error"><i class="fas fa-exclamation-circle"></i><span>Password tidak cocok!</span></div>`;
+        return;
+      }
+      if (password.length < 6) {
+        alertBox.innerHTML = `<div class="alert-glass alert-error"><i class="fas fa-exclamation-circle"></i><span>Password minimal 6 karakter!</span></div>`;
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner"></div><span>Mendaftar...</span>';
+
+      const res = await Auth.register(username, password, { name, email, role });
+      if (res.success) {
+        alertBox.innerHTML = `<div class="alert-glass alert-success"><i class="fas fa-check-circle"></i><span>Akun berhasil dibuat! Silakan masuk.</span></div>`;
+        setTimeout(() => {
+          registerCard.classList.add('hidden');
+          loginCard.classList.remove('hidden');
+          document.getElementById('loginUsername').value = username;
+          document.getElementById('loginPassword').focus();
+          alertBox.innerHTML = '';
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-user-plus"></i><span>Daftar</span>';
+        }, 1500);
+      } else {
+        alertBox.innerHTML = `<div class="alert-glass alert-error"><i class="fas fa-exclamation-circle"></i><span>${res.error}</span></div>`;
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-plus"></i><span>Daftar</span>';
+        setTimeout(() => alertBox.innerHTML = '', 5000);
+      }
+    });
+
+    // ===== INIT =====
+    async function initApp() {
+      // Load theme & settings first
+      await SettingsManager.load();
+      ThemeEngine.init();
+
+      // Check auth state
+      const currentUser = await Auth.getCurrentUser();
+      if (currentUser) {
+        showDashboard(currentUser);
+      } else {
+        document.getElementById('authView').style.display = 'flex';
+        document.getElementById('dashboardView').style.display = 'none';
+      }
+    }
+
+    function showDashboard(user) {
+      document.getElementById('authView').style.display = 'none';
+      document.getElementById('dashboardView').style.display = 'block';
+
+      // User info
+      document.getElementById('userName').textContent = user.name || user.username;
+      document.getElementById('userAvatar').textContent = (user.name || user.username).charAt(0).toUpperCase();
+      const badge = document.getElementById('userRoleBadge');
+      badge.textContent = user.role;
+      badge.className = 'badge badge-' + user.role;
+
+      // Render sidebar menu based on role access
+      renderSidebar(user.role);
+      renderQuickAccess(user.role);
+
+      // Load stats
+      loadDashboardStats();
+    }
+
+    function renderSidebar(role) {
+      const access = window._appSettings?.access?.[role] || {};
+      const menuGroups = [
+        {
+          title: 'Utama',
+          items: [
+            { id: 'dashboard', icon: 'fa-home', label: 'Dashboard', page: 'index.html', default: true },
+            { id: 'kasir', icon: 'fa-cash-register', label: 'Kasir', page: 'kasir.html' },
+            { id: 'produk', icon: 'fa-box', label: 'Produk', page: 'produk.html' },
+            { id: 'pembelian', icon: 'fa-shopping-cart', label: 'Pembelian', page: 'pembelian.html' },
+          ]
+        },
+        {
+          title: 'Transaksi',
+          items: [
+            { id: 'riwayat', icon: 'fa-history', label: 'Riwayat', page: 'riwayat.html' },
+            { id: 'hutang', icon: 'fa-hand-holding-usd', label: 'Hutang', page: 'hutang.html' },
+            { id: 'kas', icon: 'fa-wallet', label: 'Kas', page: 'kas.html' },
+            { id: 'pelanggan', icon: 'fa-users', label: 'Pelanggan', page: 'pelanggan.html' },
+          ]
+        },
+        {
+          title: 'Lainnya',
+          items: [
+            { id: 'laporan', icon: 'fa-chart-bar', label: 'Laporan', page: 'laporan.html' },
+            { id: 'pengaturan', icon: 'fa-cog', label: 'Pengaturan', page: 'pengaturan.html' },
+            { id: 'backup', icon: 'fa-cloud-download-alt', label: 'Backup', page: 'backup.html' },
+          ]
+        }
+      ];
+
+      const nav = document.getElementById('sidebarNav');
+      nav.innerHTML = '';
+
+      menuGroups.forEach(group => {
+        const visibleItems = group.items.filter(item => {
+          if (item.default) return true;
+          return access[item.id] !== false; // default allow unless explicitly false
+        });
+        if (!visibleItems.length) return;
+
+        const section = document.createElement('div');
+        section.className = 'nav-section';
+        section.innerHTML = `<div class="nav-section-title">${group.title}</div><ul class="nav-menu"></ul>`;
+        const ul = section.querySelector('ul');
+
+        visibleItems.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'nav-item';
+          const isActive = item.page === 'index.html' || (item.page && location.pathname.includes(item.page));
+          li.innerHTML = `
+            <a href="${item.page}" class="nav-link ${isActive ? 'active' : ''}" data-page="${item.page}">
+              <i class="fas ${item.icon}"></i><span>${item.label}</span>
+            </a>
+          `;
+          ul.appendChild(li);
+        });
+
+        nav.appendChild(section);
+      });
+    }
+
+    function renderQuickAccess(role) {
+      const access = window._appSettings?.access?.[role] || {};
+      const items = [
+        { id: 'kasir', icon: 'fa-cash-register', label: 'Kasir', color: '#0ea5e9', page: 'kasir.html' },
+        { id: 'produk', icon: 'fa-box', label: 'Produk', color: '#10b981', page: 'produk.html' },
+        { id: 'pembelian', icon: 'fa-shopping-cart', label: 'Pembelian', color: '#f59e0b', page: 'pembelian.html' },
+        { id: 'riwayat', icon: 'fa-history', label: 'Riwayat', color: '#8b5cf6', page: 'riwayat.html' },
+        { id: 'hutang', icon: 'fa-hand-holding-usd', label: 'Hutang', color: '#ef4444', page: 'hutang.html' },
+        { id: 'kas', icon: 'fa-wallet', label: 'Kas', color: '#14b8a6', page: 'kas.html' },
+      ];
+      const grid = document.getElementById('quickGrid');
+      grid.innerHTML = items.filter(i => access[i.id] !== false).map(item => `
+        <a href="${item.page}" class="quick-item" style="border-color:${item.color}33">
+          <div class="quick-icon" style="background:${item.color}15;color:${item.color}"><i class="fas ${item.icon}"></i></div>
+          <span class="quick-label">${item.label}</span>
+        </a>
+      `).join('');
+    }
+
+    async function loadDashboardStats() {
+      const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+      try {
+        const snap = await db.ref('finance/'+today).once('value');
+        const fin = snap.val() || {};
+        document.getElementById('statSales').textContent = Utils.formatRupiah(fin.salesTotal || 0);
+        document.getElementById('statPurchases').textContent = Utils.formatRupiah(fin.purchasesTotal || 0);
+      } catch(e) {}
+      try {
+        const snap = await db.ref('products').once('value');
+        document.getElementById('statProducts').textContent = snap.numChildren();
+      } catch(e) {}
+      try {
+        const snap = await db.ref('transactions').orderByChild('dateKey').equalTo(today).once('value');
+        document.getElementById('statTransactions').textContent = snap.numChildren();
+      } catch(e) {}
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await Auth.logout();
+      location.reload();
+    });
+
+    // Dark mode toggle
+    document.getElementById('darkModeToggle').addEventListener('click', () => {
+      SettingsManager.toggleDarkMode();
+    });
+
+    // Mobile menu
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('mobile-open');
+    });
+
+    // Stat cards click
+    document.querySelectorAll('.stat-card.clickable').forEach(card => {
+      card.addEventListener('click', () => {
+        const page = card.dataset.page;
+        if (page) location.href = page;
+      });
+    });
+
+    // Run init
+    initApp();
+  </script>
 </body>
 </html>

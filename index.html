@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WebPOS V2</title>
+    <link rel="stylesheet" href="css/core/variables.css">
+    <link rel="stylesheet" href="css/core/layout.css">
+    <link rel="stylesheet" href="css/core/responsive.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<base target="_blank">
+</head>
+<body>
+    <!-- ==================== LOGIN VIEW ==================== -->
+    <div id="login-view" style="display:none;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
+        <div class="card" style="width:100%;max-width:400px;padding:32px;text-align:center;">
+            <div style="width:60px;height:60px;border-radius:16px;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#fff;font-weight:800;font-size:20px;">POS</div>
+            <h2 style="font-size:22px;margin-bottom:8px;">WebPOS V2</h2>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:24px;">Masuk untuk mengelola toko Anda</p>
+
+            <div id="login-error" style="display:none;background:rgba(239,68,68,0.1);color:var(--danger);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;"></div>
+
+            <div class="form-group" style="text-align:left;">
+                <label class="form-label">Email</label>
+                <input type="email" id="login-email" placeholder="admin@toko.com" style="width:100%;">
+            </div>
+            <div class="form-group" style="text-align:left;">
+                <label class="form-label">Password</label>
+                <input type="password" id="login-password" placeholder="••••••" style="width:100%;">
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="doLogin()">Masuk</button>
+
+            <p style="margin-top:20px;font-size:12px;color:var(--text-muted);">
+                Belum punya akun? <a href="#" onclick="showRegister()" style="color:var(--primary);text-decoration:none;font-weight:600;">Daftar</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ==================== REGISTER VIEW ==================== -->
+    <div id="register-view" style="display:none;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;">
+        <div class="card" style="width:100%;max-width:400px;padding:32px;text-align:center;">
+            <div style="width:60px;height:60px;border-radius:16px;background:var(--gradient-accent);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;color:#fff;font-weight:800;font-size:20px;">POS</div>
+            <h2 style="font-size:22px;margin-bottom:8px;">Daftar Akun</h2>
+            <p style="font-size:13px;color:var(--text-muted);margin-bottom:24px;">Buat akun untuk toko baru</p>
+
+            <div id="reg-error" style="display:none;background:rgba(239,68,68,0.1);color:var(--danger);padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;"></div>
+
+            <div class="form-group" style="text-align:left;">
+                <label class="form-label">Nama</label>
+                <input type="text" id="reg-name" placeholder="Budi Santoso" style="width:100%;">
+            </div>
+            <div class="form-group" style="text-align:left;">
+                <label class="form-label">Email</label>
+                <input type="email" id="reg-email" placeholder="admin@toko.com" style="width:100%;">
+            </div>
+            <div class="form-group" style="text-align:left;">
+                <label class="form-label">Password</label>
+                <input type="password" id="reg-password" placeholder="Min. 6 karakter" style="width:100%;">
+            </div>
+            <div class="form-group" style="text-align:left;">
+                <label class="form-label">Role</label>
+                <select id="reg-role" style="width:100%;">
+                    <option value="kasir">Kasir</option>
+                    <option value="admin">Admin</option>
+                    <option value="owner">Owner</option>
+                    <option value="developer">Developer</option>
+                </select>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="doRegister()">Daftar</button>
+
+            <p style="margin-top:20px;font-size:12px;color:var(--text-muted);">
+                Sudah punya akun? <a href="#" onclick="showLogin()" style="color:var(--primary);text-decoration:none;font-weight:600;">Masuk</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- ==================== DASHBOARD VIEW ==================== -->
+    <div id="dashboard-view" style="display:none;">
+        <div class="app-container">
+            <aside class="sidebar" id="sidebar"></aside>
+            <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+            <main class="main-content">
+                <header class="topbar">
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <button class="mobile-toggle" onclick="toggleSidebar()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                        </button>
+                        <h1 class="topbar-title">📊 Dashboard</h1>
+                    </div>
+                    <div class="topbar-actions">
+                        <span class="badge badge-info" data-user-role>-</span>
+                    </div>
+                </header>
+
+                <div class="page-content">
+                    <!-- Stat Cards -->
+                    <div class="cards-grid">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Penjualan Hari Ini</span>
+                                <span style="color:var(--success);">💰</span>
+                            </div>
+                            <div class="card-value" id="stat-sales">Rp 0</div>
+                            <div class="card-delta up" id="stat-sales-delta">+0% vs kemarin</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Transaksi</span>
+                                <span style="color:var(--primary);">🛒</span>
+                            </div>
+                            <div class="card-value" id="stat-transactions">0</div>
+                            <div class="card-delta up" id="stat-trans-delta">+0 hari ini</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Produk Terjual</span>
+                                <span style="color:var(--warning);">📦</span>
+                            </div>
+                            <div class="card-value" id="stat-products">0</div>
+                            <div class="card-delta" style="color:var(--text-muted);">item terjual</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title">Kas Tersedia</span>
+                                <span style="color:var(--danger);">💵</span>
+                            </div>
+                            <div class="card-value" id="stat-cash">Rp 0</div>
+                            <div class="card-delta" style="color:var(--text-muted);">saldo kasir</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card" style="margin-bottom:20px;">
+                        <h3 style="font-size:16px;margin-bottom:16px;">⚡ Akses Cepat</h3>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;">
+                            <a href="kasir.html" class="btn btn-primary" style="text-decoration:none;text-align:center;">🧾 Kasir</a>
+                            <a href="produk.html" class="btn btn-secondary" style="text-decoration:none;text-align:center;">📦 Produk</a>
+                            <a href="riwayat.html" class="btn btn-secondary" style="text-decoration:none;text-align:center;">📜 Riwayat</a>
+                            <a href="pengaturan.html" class="btn btn-secondary" style="text-decoration:none;text-align:center;">⚙️ Setting</a>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                            <h3 style="font-size:16px;">🕐 Transaksi Terakhir</h3>
+                            <a href="riwayat.html" style="font-size:13px;color:var(--primary);text-decoration:none;font-weight:600;">Lihat Semua →</a>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr><th>Waktu</th><th>No. Transaksi</th><th>Total</th><th>Status</th></tr>
+                                </thead>
+                                <tbody id="recent-transactions">
+                                    <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/core/firebase-config.js"></script>
+    <script src="js/core/utils.js"></script>
+    <script src="js/core/db.js"></script>
+    <script src="js/core/auth.js"></script>
+    <script src="js/core/settings-manager.js"></script>
+    <script src="js/core/theme-engine.js"></script>
+    <script src="js/core/sidebar.js"></script>
+
+    <script>
+    let currentView = 'login';
+
+    async function init() {
+        await Auth.init();
+
+        if (Auth.getCurrentUser()) {
+            await initApp();
+            showView('dashboard');
+            loadDashboardData();
+        } else {
+            // Cek URL param
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('mode') === 'register') showView('register');
+            else showView('login');
+        }
+    }
+
+    function showView(view) {
+        currentView = view;
+        document.getElementById('login-view').style.display = view === 'login' ? 'flex' : 'none';
+        document.getElementById('register-view').style.display = view === 'register' ? 'flex' : 'none';
+        document.getElementById('dashboard-view').style.display = view === 'dashboard' ? 'block' : 'none';
+    }
+
+    function showLogin() { showView('login'); }
+    function showRegister() { showView('register'); }
+
+    async function doLogin() {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-password').value;
+        const errEl = document.getElementById('login-error');
+
+        if (!email || !pass) {
+            errEl.textContent = 'Email dan password wajib diisi';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        errEl.style.display = 'none';
+        const res = await Auth.login(email, pass);
+        if (res.success) {
+            window.location.reload();
+        } else {
+            errEl.textContent = res.error;
+            errEl.style.display = 'block';
+        }
+    }
+
+    async function doRegister() {
+        const name = document.getElementById('reg-name').value;
+        const email = document.getElementById('reg-email').value;
+        const pass = document.getElementById('reg-password').value;
+        const role = document.getElementById('reg-role').value;
+        const errEl = document.getElementById('reg-error');
+
+        if (!email || !pass || !name) {
+            errEl.textContent = 'Semua field wajib diisi';
+            errEl.style.display = 'block';
+            return;
+        }
+
+        errEl.style.display = 'none';
+        const res = await Auth.register(email, pass, { name, role });
+        if (res.success) {
+            Utils.toast('Akun berhasil dibuat! Silakan masuk.', 'success');
+            showView('login');
+        } else {
+            errEl.textContent = res.error;
+            errEl.style.display = 'block';
+        }
+    }
+
+    // Dashboard data loader
+    async function loadDashboardData() {
+        const today = Utils.getDateKey();
+        const yesterday = Utils.getDateKey(new Date(Date.now() - 86400000));
+
+        try {
+            // Load today's finance
+            const todayData = await DB.get(`finance/${today}`);
+            const sales = todayData?.salesTotal || 0;
+            document.getElementById('stat-sales').textContent = Utils.formatRupiah(sales);
+
+            // Load transactions count
+            const trans = await DB.query('transactions', { orderByChild: 'dateKey', equalTo: today });
+            const count = trans ? Object.keys(trans).length : 0;
+            document.getElementById('stat-transactions').textContent = count;
+
+            // Cash (opening + sales - purchases - withdrawals + topups)
+            const cash = (todayData?.openingBalance || 0) + sales - (todayData?.purchasesTotal || 0) - (todayData?.withdrawals || 0) + (todayData?.topups || 0);
+            document.getElementById('stat-cash').textContent = Utils.formatRupiah(cash);
+
+            // Recent transactions (last 5)
+            const recent = await DB.query('transactions', { orderByChild: 'dateKey', equalTo: today, limitToLast: 5 });
+            const tbody = document.getElementById('recent-transactions');
+            if (!recent) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada transaksi hari ini</td></tr>';
+                return;
+            }
+
+            const rows = Object.entries(recent).reverse().map(([id, t]) => `
+                <tr>
+                    <td>${Utils.formatDate(t.timestamp, true)}</td>
+                    <td>${id.slice(-6).toUpperCase()}</td>
+                    <td style="font-weight:600;">${Utils.formatRupiah(t.total)}</td>
+                    <td><span class="badge badge-success">${t.status || 'completed'}</span></td>
+                </tr>
+            `).join('');
+            tbody.innerHTML = rows;
+
+        } catch (err) {
+            console.error('Dashboard load error:', err);
+        }
+    }
+
+    // Mobile sidebar
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+        document.getElementById('sidebarOverlay').classList.remove('active');
+    }
+
+    // Enter key login
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            if (currentView === 'login') doLogin();
+            if (currentView === 'register') doRegister();
+        }
+    });
+
+    // Start
+    init();
+    </script>
+</body>
+</html>

@@ -159,8 +159,13 @@ body{background:var(--bg-primary);color:var(--text-primary);line-height:1.6;min-
 .d-none{display:none!important}
 .d-block{display:block!important}
 .d-flex{display:flex!important}
-.d-md-none{display:none!important}
-@media(max-width:768px){.d-md-none{display:none!important}.d-sm-none{display:none!important}}
+
+/* d-md-none = hide on desktop (>=1024px), show on tablet & mobile */
+@media(min-width:1024px){.d-md-none{display:none!important}}
+
+/* d-sm-none = hide on mobile-up (>=768px), show only on small mobile */
+@media(min-width:768px){.d-sm-none{display:none!important}}
+
 .text-center{text-align:center!important}
 .text-primary{color:var(--primary)!important}
 .text-success{color:var(--success)!important}

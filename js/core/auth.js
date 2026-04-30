@@ -1,147 +1,201 @@
 /**
  * AUTH — WebPOS V2
- * Login, register, role check, session guard.
- * Profile: /users/{uid}/profile → name, email, role, phone, isActive
+ * Username-based authentication via Firebase Auth Email/Password
+ * Internal email format: username@webpos.local
+ * Profile path: users/{uid}/profile
  */
 
 const Auth = {
-    _currentUser: null,
-    _userProfile: null,
+  _currentUser: null,
 
-    async init() {
-        return new Promise((resolve) => {
-            WebPOS.auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    this._currentUser = user;
-                    const snap = await db.ref(`users/${user.uid}/profile`).once('value');
-                    this._userProfile = snap.val() || { role: 'kasir', name: user.email, isActive: true };
-                } else {
-                    this._currentUser = null;
-                    this._userProfile = null;
-                }
-                resolve(this._currentUser);
-            });
-        });
-    },
+  /**
+   * REGISTER
+   * @param {string} username — huruf kecil, angka, underscore
+   * @param {string} password
+   * @param {object} profile — { name, email, role }
+   */
+  async register(username, password, profile = {}) {
+    try {
+      const cleanUser = username.toLowerCase().trim();
+      const internalEmail = cleanUser + '@webpos.local';
 
-    async login(email, password) {
-        try {
-            const cred = await WebPOS.auth.signInWithEmailAndPassword(email, password);
-            const uid = cred.user.uid;
+      // 1. Cek apakah username sudah dipakai
+      const methods = await auth.fetchSignInMethodsForEmail(internalEmail);
+      if (methods && methods.length > 0) {
+        return { success: false, error: 'Username sudah terdaftar. Silakan login atau pilih username lain.' };
+      }
 
-            // Load profile
-            const snap = await db.ref(`users/${uid}/profile`).once('value');
-            const profile = snap.val();
+      // 2. Buat akun Firebase Auth
+      const cred = await auth.createUserWithEmailAndPassword(internalEmail, password);
+      const uid = cred.user.uid;
 
-            if (!profile) {
-                await WebPOS.auth.signOut();
-                return { success: false, error: 'Profil tidak ditemukan. Hubungi owner.' };
-            }
+      // 3. Simpan profile ke RTDB
+      const userProfile = {
+        username: cleanUser,
+        name: profile.name || cleanUser,
+        email: profile.email || null,
+        role: profile.role || 'kasir',
+        phone: profile.phone || '',
+        isActive: true,
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        lastLogin: firebase.database.ServerValue.TIMESTAMP
+      };
 
-            // Cek isActive
-            if (profile.isActive === false) {
-                await WebPOS.auth.signOut();
-                return { success: false, error: 'Akun dinonaktifkan. Hubungi owner.' };
-            }
+      await db.ref('users/' + uid + '/profile').set(userProfile);
 
-            // Update last login
-            await db.ref(`users/${uid}/meta/lastLogin`).set(Date.now());
-            this._userProfile = profile;
-            return { success: true, user: cred.user };
-        } catch (err) {
-            return { success: false, error: this._parseError(err) };
-        }
-    },
+      // 4. Simpan mapping username (untur referensi owner / admin)
+      await db.ref('usernames/' + cleanUser).set({
+        uid: uid,
+        name: userProfile.name,
+        role: userProfile.role,
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+      });
 
-    async register(email, password, profile = {}) {
-        let cred = null;
-        try {
-            // Step 1: Buat auth user
-            cred = await WebPOS.auth.createUserWithEmailAndPassword(email, password);
-            const uid = cred.user.uid;
+      // 5. Log
+      await db.ref('logs/' + new Date().toISOString().slice(0,10).replace(/-/g,'')).push({
+        action: 'user_register',
+        userId: uid,
+        target: cleanUser,
+        details: { role: userProfile.role },
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      });
 
-            // Step 2: Simpan profile ke DB
-            const defaultProfile = {
-                name: profile.name || email.split('@')[0],
-                email: email,
-                role: profile.role || 'kasir',
-                phone: profile.phone || '',
-                isActive: true,
-                createdAt: Date.now()
-            };
+      this._currentUser = userProfile;
+      return { success: true, user: userProfile };
 
-            try {
-                await db.ref(`users/${uid}/profile`).set(defaultProfile);
-                await db.ref(`users/${uid}/meta/lastLogin`).set(Date.now());
-            } catch (dbErr) {
-                // DB write gagal (PERMISSION_DENIED) → hapus auth user supaya tidak orphan
-                console.error('[Auth.register] DB write failed:', dbErr);
-                try {
-                    await cred.user.delete();
-                } catch (delErr) {
-                    console.error('[Auth.register] Failed to cleanup auth user:', delErr);
-                }
-                return {
-                    success: false,
-                    error: 'Gagal menyimpan profil. Pastikan Firebase Database Rules sudah diatur. Lihat file firebase-rules.json'
-                };
-            }
-
-            return { success: true, uid };
-        } catch (err) {
-            // Kalau auth create gagal, tidak perlu cleanup
-            return { success: false, error: this._parseError(err) };
-        }
-    },
-
-    async logout() {
-        await WebPOS.auth.signOut();
-        this._currentUser = null;
-        this._userProfile = null;
-        window.location.href = 'index.html';
-    },
-
-    getCurrentUser() { return this._currentUser; },
-    getUserProfile() { return this._userProfile; },
-    getUserRole() { return this._userProfile?.role || 'kasir'; },
-
-    isRole(roles) {
-        const r = this.getUserRole();
-        if (Array.isArray(roles)) return roles.includes(r);
-        return r === roles;
-    },
-
-    requireAuth() {
-        if (!this._currentUser) {
-            window.location.href = 'index.html?mode=login';
-            return false;
-        }
-        return true;
-    },
-
-    requireRole(roles) {
-        if (!this.requireAuth()) return false;
-        if (!this.isRole(roles)) {
-            Utils.toast('Akses ditolak: role tidak memenuhi syarat', 'error');
-            setTimeout(() => window.location.href = 'index.html', 1500);
-            return false;
-        }
-        return true;
-    },
-
-    _parseError(err) {
-        const map = {
-            'auth/invalid-email': 'Email tidak valid',
-            'auth/user-disabled': 'Akun dinonaktifkan',
-            'auth/user-not-found': 'Email tidak terdaftar',
-            'auth/wrong-password': 'Password salah',
-            'auth/email-already-in-use': 'Email sudah terdaftar',
-            'auth/weak-password': 'Password minimal 6 karakter',
-            'auth/invalid-credential': 'Email atau password salah',
-            'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.'
-        };
-        return map[err.code] || err.message || 'Terjadi kesalahan';
+    } catch (err) {
+      console.error('Register error:', err);
+      // Cleanup orphan user kalau profile gagal disimpan
+      if (auth.currentUser) {
+        try { await auth.currentUser.delete(); } catch(e) {}
+      }
+      return { success: false, error: this._mapError(err) };
     }
+  },
+
+  /**
+   * LOGIN
+   * @param {string} username
+   * @param {string} password
+   */
+  async login(username, password) {
+    try {
+      const cleanUser = username.toLowerCase().trim();
+      const internalEmail = cleanUser + '@webpos.local';
+
+      const cred = await auth.signInWithEmailAndPassword(internalEmail, password);
+      const uid = cred.user.uid;
+
+      // Ambil profile
+      const snap = await db.ref('users/' + uid + '/profile').once('value');
+      let profile = snap.val();
+
+      // Self-healing: kalau profile hilang (orphan), buatkan default
+      if (!profile) {
+        profile = {
+          username: cleanUser,
+          name: cleanUser,
+          email: null,
+          role: 'kasir',
+          isActive: true,
+          createdAt: firebase.database.ServerValue.TIMESTAMP,
+          lastLogin: firebase.database.ServerValue.TIMESTAMP
+        };
+        await db.ref('users/' + uid + '/profile').set(profile);
+        await db.ref('usernames/' + cleanUser).set({
+          uid: uid, name: cleanUser, role: 'kasir'
+        });
+      }
+
+      // Cek isActive
+      if (profile.isActive === false) {
+        await auth.signOut();
+        return { success: false, error: 'Akun Anda dinonaktifkan. Hubungi owner.' };
+      }
+
+      // Update lastLogin
+      await db.ref('users/' + uid + '/profile/lastLogin').set(firebase.database.ServerValue.TIMESTAMP);
+
+      this._currentUser = profile;
+
+      // Simpan ke session (optional, untuk offline awareness)
+      sessionStorage.setItem('webpos_user', JSON.stringify(profile));
+
+      return { success: true, user: profile };
+
+    } catch (err) {
+      console.error('Login error:', err);
+      return { success: false, error: this._mapError(err) };
+    }
+  },
+
+  /**
+   * LOGOUT
+   */
+  async logout() {
+    this._currentUser = null;
+    sessionStorage.removeItem('webpos_user');
+    try {
+      await auth.signOut();
+    } catch(e) {}
+    return true;
+  },
+
+  /**
+   * GET CURRENT USER
+   * Cek Firebase Auth state + ambil profile dari RTDB
+   */
+  async getCurrentUser() {
+    return new Promise((resolve) => {
+      const unsub = auth.onAuthStateChanged(async (fbUser) => {
+        unsub();
+        if (!fbUser) {
+          this._currentUser = null;
+          resolve(null);
+          return;
+        }
+        try {
+          const snap = await db.ref('users/' + fbUser.uid + '/profile').once('value');
+          const profile = snap.val();
+          if (profile && profile.isActive !== false) {
+            this._currentUser = profile;
+            resolve(profile);
+          } else {
+            // Profile tidak ada atau nonaktif → logout
+            await this.logout();
+            resolve(null);
+          }
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    });
+  },
+
+  /**
+   * MAP ERROR FIREBASE → BAHASA INDONESIA
+   */
+  _mapError(err) {
+    const code = err.code || err.message || '';
+    const map = {
+      'auth/invalid-email': 'Format username tidak valid.',
+      'auth/user-disabled': 'Akun ini dinonaktifkan.',
+      'auth/user-not-found': 'Username tidak ditemukan.',
+      'auth/wrong-password': 'Password salah.',
+      'auth/invalid-credential': 'Username atau password salah.',
+      'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.',
+      'auth/email-already-in-use': 'Username sudah terdaftar.',
+      'auth/weak-password': 'Password terlalu lemah. Minimal 6 karakter.',
+      'auth/network-request-failed': 'Koneksi internet bermasalah.',
+      'auth/invalid-login-credentials': 'Username atau password salah.',
+      'PERMISSION_DENIED': 'Gagal menyimpan data. Cek Firebase Rules.',
+    };
+    for (const [key, val] of Object.entries(map)) {
+      if (code.includes(key)) return val;
+    }
+    return err.message || 'Terjadi kesalahan. Silakan coba lagi.';
+  }
 };
 
+// Expose
 window.Auth = Auth;

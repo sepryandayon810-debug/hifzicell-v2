@@ -21,13 +21,14 @@
 // ===================== CONFIG FIREBASE =====================
 // ⚠️ GANTI INI DENGAN CONFIG FIREBASE PROJECT ANDA
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCSC05MTnaiiSftj1TA-LVCH4ymHBAbkoU",
+  authDomain: "hifzicell-v2.firebaseapp.com",
+  databaseURL: "https://hifzicell-v2-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "hifzicell-v2",
+  storageBucket: "hifzicell-v2.firebasestorage.app",
+  messagingSenderId: "766095621773",
+  appId: "1:766095621773:web:da40a79eab0f573683acc4",
+  measurementId: "G-N9B9PKFCHT"
 };
 
 // Inisialisasi Firebase (gunakan compat mode agar tidak perlu module bundler)

@@ -150,25 +150,34 @@
     .badge-owner { background: rgba(245,158,11,.15); color: #f59e0b; }
     .badge-developer { background: rgba(139,92,246,.15); color: #8b5cf6; }
 
-    /* ⭐ FIX: Hide menu-toggle di mobile/tablet */
-    @media(max-width:1024px){
-      .menu-toggle { display: none !important; }
-    }
+    /* ⭐ FIX: Hide menu-toggle SEMUA ukuran layar */
+    .menu-toggle { display: none !important; }
 
     /* Fix dropdown arrow visibility */
+.nav-dropdown-toggle {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between !important;
+  width: 100%;
+}
+.nav-dropdown-toggle > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
 .dropdown-arrow {
-  display: inline-block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  color: var(--text-secondary);
-  margin-left: auto;
+  display: inline-flex !important;
+  align-items: center;
+  margin-left: auto !important;
   font-size: 0.75rem;
+  color: var(--text-secondary);
+  transition: transform 0.2s;
 }
 .nav-dropdown.open .dropdown-arrow {
   transform: rotate(180deg);
 }
   </style>
-<base target="_blank">
+<base target="">
 </head>
 <body>
 

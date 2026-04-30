@@ -149,6 +149,11 @@
     .badge-admin { background: rgba(59,130,246,.15); color: #3b82f6; }
     .badge-owner { background: rgba(245,158,11,.15); color: #f59e0b; }
     .badge-developer { background: rgba(139,92,246,.15); color: #8b5cf6; }
+
+    /* ⭐ FIX: Hide menu-toggle di mobile/tablet */
+    @media(max-width:1024px){
+      .menu-toggle { display: none !important; }
+    }
   </style>
 <base target="_blank">
 </head>
@@ -645,6 +650,10 @@
         const today = getTodayString();
         const user = await Auth.getCurrentUser();
         if (!user) return;
+        // ⭐ FIX: Pastikan uid ada, kalau tidak pakai dari auth.currentUser
+        if (!user.uid && auth.currentUser) {
+          user.uid = auth.currentUser.uid;
+        }
         loadUserData(user);
 
         // Load transactions
@@ -724,6 +733,7 @@
       const today = getTodayString();
       Auth.getCurrentUser().then(user => {
         if (!user) return;
+        if (!user.uid && auth.currentUser) user.uid = auth.currentUser.uid;
         db.ref('shifts/' + today + '/' + user.uid).on('value', snap => {
           const shift = snap.val();
           isShiftOpen = shift && shift.status === 'open';
@@ -759,6 +769,7 @@
       const today = getTodayString();
       const user = await Auth.getCurrentUser();
       if (!user) return;
+      if (!user.uid && auth.currentUser) user.uid = auth.currentUser.uid;
       if (isShiftOpen) { window.location.href = 'page-kas-shift.html'; return; }
       showLoading(true);
       try {
@@ -817,6 +828,8 @@
       if (!targetUid) { Utils.toast('Pilih user penerima terlebih dahulu', 'warning'); return; }
       const targetUser = availableUsers.find(u => u.uid === targetUid);
       const currentUser = await Auth.getCurrentUser();
+      if (!currentUser) return;
+      if (!currentUser.uid && auth.currentUser) currentUser.uid = auth.currentUser.uid;
       const today = getTodayString();
       showLoading(true);
       try {
@@ -910,6 +923,7 @@
       if (document.visibilityState === 'visible') {
         Auth.getCurrentUser().then(user => {
           if (!user) return;
+          if (!user.uid && auth.currentUser) user.uid = auth.currentUser.uid;
           const today = getTodayString();
           db.ref('shifts/' + today + '/' + user.uid).once('value').then(snap => {
             isShiftOpen = snap.val() && snap.val().status === 'open';

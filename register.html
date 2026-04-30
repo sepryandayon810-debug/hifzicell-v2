@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WebPOS V3 — Daftar Akun</title>
+
+<!-- Firebase SDK (compat mode, tidak perlu module bundler) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<!-- CSS Variables untuk 10 Tema (default: Mint Fresh) -->
+<style>
+  :root {
+    /* === TEMA DEFAULT: Mint Fresh === */
+    --primary: #10b981;
+    --primary-light: #34d399;
+    --primary-dark: #059669;
+    --bg: #f0fdf4;
+    --surface: #ffffff;
+    --text: #1f2937;
+    --text-secondary: #6b7280;
+    --border: #d1fae5;
+    --shadow: 0 10px 40px rgba(16,185,129,0.12);
+    --radius: 16px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; font-family: var(--font); }
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .card {
+    background: var(--surface);
+    width: 100%;
+    max-width: 420px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 36px 28px;
+    animation: fadeUp 0.5s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(20px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .logo {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .logo-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    font-size: 28px; color: #fff;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 20px rgba(16,185,129,0.25);
+  }
+  .logo h1 { font-size: 22px; color: var(--text); letter-spacing: -0.5px; }
+  .logo p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+  .form-group { margin-bottom: 18px; }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--surface);
+    transition: all 0.2s;
+    outline: none;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(16,185,129,0.1);
+  }
+
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 8px;
+    box-shadow: 0 4px 16px rgba(16,185,129,0.25);
+  }
+  .btn:active { transform: scale(0.98); }
+
+  .link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .link a {
+    color: var(--primary-dark);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .toast {
+    position: fixed;
+    top: 20px; left: 50%;
+    transform: translateX(-50%) translateY(-100px);
+    background: #1f2937;
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transition: transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    z-index: 9999;
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--primary-dark); }
+  .toast.error { background: #ef4444; }
+
+  .loading {
+    display: none;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .loading.active { display: block; }
+
+  /* Responsive kecil */
+  @media (max-width: 360px) {
+    .card { padding: 28px 20px; }
+    .logo h1 { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">🛒</div>
+    <h1>WebPOS V3</h1>
+    <p>Daftar akun baru</p>
+  </div>
+
+  <form id="formRegister" autocomplete="off">
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="regUsername" placeholder="contoh: budi123" required>
+    </div>
+
+    <div class="form-group">
+      <label>Nama Lengkap</label>
+      <input type="text" id="regNama" placeholder="Nama lengkap Anda" required>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="regPassword" placeholder="Min. 6 karakter" required>
+    </div>
+
+    <div class="form-group">
+      <label>Role</label>
+      <select id="regRole">
+        <option value="kasir">Kasir</option>
+        <option value="admin">Admin</option>
+        <option value="owner">Owner</option>
+        <option value="developer">Developer</option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn">Daftar Sekarang</button>
+    <div class="loading" id="loading">⏳ Sedang mendaftarkan...</div>
+  </form>
+
+  <div class="link">
+    Sudah punya akun? <a href="login.html">Masuk di sini</a>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Load module config & auth -->
+<script src="js/modules/firebase-config.js"></script>
+<script src="js/modules/auth.js"></script>
+
+<script>
+/**
+ * register.html — Handler Form Registrasi
+ * Fungsi: Tangkap input form → panggil AUTH.register() → redirect ke login
+ */
+
+const form = document.getElementById('formRegister');
+const toast = document.getElementById('toast');
+const loading = document.getElementById('loading');
+
+function showToast(msg, type='success') {
+  toast.textContent = msg;
+  toast.className = 'toast ' + type;
+  setTimeout(() => toast.classList.add('show'), 10);
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById('regUsername').value.trim().toLowerCase();
+  const nama     = document.getElementById('regNama').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const role     = document.getElementById('regRole').value;
+
+  // Validasi sederhana
+  if (username.includes(' ') || username.includes('@')) {
+    showToast('Username tidak boleh ada spasi atau @!', 'error');
+    return;
+  }
+
+  loading.classList.add('active');
+
+  const result = await AUTH.register(username, password, nama, role);
+
+  loading.classList.remove('active');
+
+  if (result.success) {
+    showToast(result.message, 'success');
+    form.reset();
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 1500);
+  } else {
+    showToast(result.message, 'error');
+  }
+});
+</script>
+
+</body>
+</html>

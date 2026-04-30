@@ -28,13 +28,24 @@ developer → Ungu badge
 owner → Emas badge
 admin → Biru badge
 kasir → Hijau badge
-Tema
-Ocean (default): Biru toska, fresh
-Forest: Hijau sage, natural
-Sunset: Orange-ungu, warm
-Midnight: Navy-gold, elegant
+Tema (10 Tema)
+Table
+Tema	Nuansa	Primary	Vibe
+Ocean (default)	🌊 Biru toska	#0ea5e9	Fresh, modern, clean
+Forest	🌲 Hijau sage	#10b981	Natural, calm, organic
+Sunset	🌅 Orange-ungu	#f97316	Warm, energetic, bold
+Midnight	🌙 Navy-gold	#6366f1	Elegant, premium, luxury
+Cherry	🍒 Merah-pink	#e11d48	Bold, passionate, energetic
+Lavender	💜 Ungu muda	#8b5cf6	Soft, dreamy, elegant
+Coffee	☕ Coklat-krem	#92400e	Warm, cozy, classic
+Mint	🌿 Hijau muda	#14b8a6	Fresh, clean, airy
+Coral	🪸 Merah muda	#f43f5e	Vibrant, playful, tropical
+Slate	🪨 Abu-abu	#475569	Professional, corporate, minimalist
 Aturan Penting
-Setting HANYA dari pengaturan.html
-Tidak ada hardcode warna / nama toko di page lain
+Setting HANYA dari pengaturan.html — tidak ada hardcode di page lain
+Tidak ada hardcode warna / nama toko / format struk di page lain
 Semua page wajib panggil initApp() di awal
 Theme & dark mode di-load dari Firebase /settings/app
+Struk format di-load dari Firebase /settings/receipt
+Bluetooth config di-load dari Firebase /settings/bluetooth
+Secret (API key) disimpan di firebase-config.js — jangan commit ke public repo

@@ -15,7 +15,6 @@ const firebaseConfig = {
     measurementId: "G-N9B9PKFCHT"
 };
 
-// Initialize Firebase (hanya sekali)
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -23,5 +22,4 @@ if (!firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.database();
 
-// Global export untuk non-module script
-window.WebPOS = { auth, db };
+window.firebaseApp = { auth, db };

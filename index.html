@@ -4,64 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>WebPOS V2</title>
+    <!-- V2 Core CSS -->
     <link rel="stylesheet" href="css/core/variables.css">
     <link rel="stylesheet" href="css/core/layout.css">
+    <link rel="stylesheet" href="css/core/darkmode.css">
     <link rel="stylesheet" href="css/core/responsive.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-    /* ===== AUTH PAGE STYLES ===== */
+    /* ===== GLASSMORPHISM AUTH — Uses CSS Variables ===== */
     .auth-page {
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 20px;
-        background: var(--bg);
+        background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
         position: relative;
         overflow: hidden;
+        transition: background 0.5s ease;
     }
 
-    .auth-page::before {
-        content: "";
+    /* Animated shapes using theme colors */
+    .auth-bg-shapes {
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .auth-shape {
         position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 600px;
-        height: 600px;
-        background: var(--gradient-primary);
-        opacity: 0.08;
         border-radius: 50%;
         filter: blur(80px);
-        pointer-events: none;
+        opacity: 0.5;
+        animation: authFloat 20s infinite ease-in-out;
     }
 
-    .auth-page::after {
-        content: "";
-        position: absolute;
-        bottom: -30%;
-        left: -10%;
-        width: 400px;
-        height: 400px;
-        background: var(--gradient-accent);
-        opacity: 0.06;
-        border-radius: 50%;
-        filter: blur(60px);
-        pointer-events: none;
+    .auth-shape-1 {
+        width: 400px; height: 400px;
+        background: var(--secondary);
+        top: -100px; left: -100px;
+    }
+    .auth-shape-2 {
+        width: 300px; height: 300px;
+        background: var(--primary-dark);
+        bottom: -50px; right: -50px;
+        animation-delay: -7s;
+    }
+    .auth-shape-3 {
+        width: 250px; height: 250px;
+        background: var(--accent);
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        animation-delay: -14s;
+    }
+
+    @keyframes authFloat {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(30px, -30px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
     }
 
     .auth-card {
         width: 100%;
-        max-width: 420px;
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
+        max-width: 440px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         padding: 40px 32px;
-        box-shadow: var(--shadow);
         position: relative;
         z-index: 1;
-        animation: authSlideUp 0.5s ease;
+        animation: authSlideUp 0.6s ease;
     }
 
     @keyframes authSlideUp {
@@ -71,48 +93,45 @@
 
     .auth-brand {
         text-align: center;
-        margin-bottom: 32px;
+        margin-bottom: 28px;
     }
 
     .auth-brand-icon {
-        width: 72px;
-        height: 72px;
+        width: 72px; height: 72px;
         border-radius: 20px;
-        background: var(--gradient-primary);
+        background: linear-gradient(135deg, var(--primary), var(--accent));
         display: inline-flex;
         align-items: center;
         justify-content: center;
         color: #fff;
-        font-weight: 900;
-        font-size: 28px;
+        font-size: 32px;
         margin-bottom: 16px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         animation: authPulse 2s ease infinite;
     }
 
     @keyframes authPulse {
         0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.03); }
+        50% { transform: scale(1.05); }
     }
 
     .auth-brand h1 {
         font-size: 26px;
         font-weight: 800;
-        color: var(--text);
+        color: #fff;
         margin-bottom: 6px;
-        letter-spacing: -0.5px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
     .auth-brand p {
         font-size: 14px;
-        color: var(--text-muted);
-        line-height: 1.5;
+        color: rgba(255,255,255,0.85);
     }
 
     .auth-form {
         display: flex;
         flex-direction: column;
-        gap: 18px;
+        gap: 16px;
     }
 
     .auth-input-group {
@@ -123,7 +142,7 @@
         display: block;
         font-size: 12px;
         font-weight: 700;
-        color: var(--text-muted);
+        color: rgba(255,255,255,0.9);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 6px;
@@ -132,84 +151,82 @@
     .auth-input-group input,
     .auth-input-group select {
         width: 100%;
-        padding: 12px 14px;
+        padding: 12px 14px 12px 42px;
         font-size: 15px;
         font-family: inherit;
-        border: 2px solid var(--border);
-        border-radius: var(--radius-sm);
-        background: var(--card);
-        color: var(--text);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 12px;
+        background: rgba(255,255,255,0.12);
+        color: #fff;
         transition: all 0.2s;
         outline: none;
     }
 
+    .auth-input-group input::placeholder,
+    .auth-input-group select option {
+        color: rgba(255,255,255,0.55);
+    }
+
     .auth-input-group input:focus,
     .auth-input-group select:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(14,165,233,0.1);
+        background: rgba(255,255,255,0.2);
+        border-color: rgba(255,255,255,0.5);
+        box-shadow: 0 0 0 4px rgba(255,255,255,0.1);
     }
 
-    .auth-input-group input.error {
-        border-color: var(--danger);
-        box-shadow: 0 0 0 4px rgba(239,68,68,0.1);
+    .auth-input-group .input-icon {
+        position: absolute;
+        left: 14px;
+        bottom: 14px;
+        color: rgba(255,255,255,0.6);
+        font-size: 16px;
+        pointer-events: none;
     }
 
-    .auth-input-group .input-hint {
-        font-size: 11px;
-        color: var(--text-muted);
-        margin-top: 4px;
-        display: none;
-    }
-
-    .auth-input-group input:placeholder-shown + .input-hint,
-    .auth-input-group input:focus + .input-hint {
-        display: block;
-    }
-
-    .password-wrap {
-        position: relative;
-    }
-
-    .password-wrap input {
-        padding-right: 44px;
-    }
-
-    .toggle-password {
+    .auth-input-group .password-toggle {
         position: absolute;
         right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
+        bottom: 10px;
         background: none;
         border: none;
-        color: var(--text-muted);
+        color: rgba(255,255,255,0.6);
         cursor: pointer;
+        font-size: 16px;
         padding: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    .toggle-password:hover {
-        color: var(--primary);
+    .auth-input-group .password-toggle:hover {
+        color: #fff;
+    }
+
+    .auth-input-group .input-hint {
+        font-size: 11px;
+        color: rgba(255,255,255,0.6);
+        margin-top: 4px;
     }
 
     .auth-error {
         display: none;
-        background: rgba(239,68,68,0.08);
-        border: 1px solid rgba(239,68,68,0.2);
-        color: var(--danger);
+        background: rgba(239,68,68,0.2);
+        border: 1px solid rgba(239,68,68,0.35);
+        color: #fecaca;
         padding: 12px 14px;
-        border-radius: var(--radius-sm);
+        border-radius: 12px;
         font-size: 13px;
         font-weight: 500;
-        animation: shake 0.4s ease;
+        animation: authShake 0.4s ease;
     }
 
     .auth-error.show {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
-    @keyframes shake {
+    @keyframes authShake {
         0%, 100% { transform: translateX(0); }
         20% { transform: translateX(-6px); }
         40% { transform: translateX(6px); }
@@ -223,30 +240,25 @@
         font-size: 15px;
         font-weight: 700;
         border: none;
-        border-radius: var(--radius-sm);
+        border-radius: 12px;
         cursor: pointer;
-        transition: all 0.2s;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        position: relative;
-        overflow: hidden;
+        transition: all 0.3s;
+        margin-top: 4px;
     }
 
     .auth-btn-primary {
-        background: var(--gradient-primary);
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
         color: #fff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
 
     .auth-btn-primary:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-    }
-
-    .auth-btn-primary:active:not(:disabled) {
-        transform: translateY(0);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
     .auth-btn-primary:disabled {
@@ -254,21 +266,8 @@
         cursor: not-allowed;
     }
 
-    .auth-btn-secondary {
-        background: transparent;
-        color: var(--primary);
-        border: 2px solid var(--border);
-        font-weight: 600;
-    }
-
-    .auth-btn-secondary:hover {
-        border-color: var(--primary);
-        background: rgba(14,165,233,0.05);
-    }
-
     .auth-spinner {
-        width: 18px;
-        height: 18px;
+        width: 18px; height: 18px;
         border: 2px solid rgba(255,255,255,0.3);
         border-top-color: #fff;
         border-radius: 50%;
@@ -281,7 +280,7 @@
     }
 
     .auth-btn.loading .btn-text {
-        opacity: 0.7;
+        opacity: 0.8;
     }
 
     @keyframes spin {
@@ -290,41 +289,31 @@
 
     .auth-footer {
         text-align: center;
-        margin-top: 24px;
+        margin-top: 20px;
         font-size: 13px;
-        color: var(--text-muted);
+        color: rgba(255,255,255,0.8);
     }
 
     .auth-footer a {
-        color: var(--primary);
-        text-decoration: none;
+        color: #fff;
         font-weight: 700;
+        text-decoration: none;
         cursor: pointer;
-        transition: color 0.2s;
     }
 
     .auth-footer a:hover {
         text-decoration: underline;
     }
 
-    .auth-divider {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin: 20px 0;
-        color: var(--text-muted);
-        font-size: 12px;
+    .auth-version {
+        text-align: center;
+        margin-top: 16px;
+        font-size: 11px;
+        color: rgba(255,255,255,0.45);
     }
 
-    .auth-divider::before,
-    .auth-divider::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: var(--border);
-    }
-
-    .role-select {
+    /* Role Selector */
+    .role-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
@@ -340,68 +329,53 @@
     }
 
     .role-option label {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
         padding: 12px;
-        text-align: center;
-        border: 2px solid var(--border);
-        border-radius: var(--radius-sm);
+        border: 1px solid rgba(255,255,255,0.25);
+        border-radius: 12px;
         cursor: pointer;
         font-size: 13px;
         font-weight: 600;
-        color: var(--text-muted);
+        color: rgba(255,255,255,0.8);
+        background: rgba(255,255,255,0.08);
         transition: all 0.2s;
-        background: var(--card);
     }
 
     .role-option input:checked + label {
-        border-color: var(--primary);
-        background: rgba(14,165,233,0.08);
-        color: var(--primary);
+        border-color: rgba(255,255,255,0.6);
+        background: rgba(255,255,255,0.2);
+        color: #fff;
     }
 
     .role-option label:hover {
-        border-color: var(--primary-light);
+        background: rgba(255,255,255,0.15);
     }
 
-    .role-badge-preview {
-        display: inline-block;
-        width: 10px;
-        height: 10px;
+    .role-dot {
+        width: 10px; height: 10px;
         border-radius: 50%;
-        margin-right: 6px;
+        display: inline-block;
     }
 
-    .role-developer { background: #8b5cf6; }
-    .role-owner { background: #f59e0b; }
-    .role-admin { background: #0ea5e9; }
-    .role-kasir { background: #10b981; }
+    .dot-developer { background: #8b5cf6; box-shadow: 0 0 6px #8b5cf6; }
+    .dot-owner { background: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+    .dot-admin { background: #0ea5e9; box-shadow: 0 0 6px #0ea5e9; }
+    .dot-kasir { background: #10b981; box-shadow: 0 0 6px #10b981; }
 
-    /* Transisi antar form */
-    .auth-form-wrap {
-        transition: all 0.3s ease;
+    /* Dark mode adjustments for glass card */
+    .dark .auth-card {
+        background: rgba(30, 41, 59, 0.4);
+        border-color: rgba(255,255,255,0.1);
     }
 
-    .auth-form-wrap.hidden {
-        display: none;
-    }
-
-    /* Mobile */
     @media (max-width: 480px) {
-        .auth-card {
-            padding: 28px 20px;
-            border-radius: var(--radius-sm);
-        }
-        .auth-brand-icon {
-            width: 60px;
-            height: 60px;
-            font-size: 22px;
-        }
-        .auth-brand h1 {
-            font-size: 22px;
-        }
-        .role-select {
-            grid-template-columns: 1fr 1fr;
-        }
+        .auth-card { padding: 28px 20px; }
+        .auth-brand-icon { width: 60px; height: 60px; font-size: 24px; }
+        .auth-brand h1 { font-size: 22px; }
+        .role-grid { grid-template-columns: 1fr 1fr; }
     }
     </style>
 <base target="_blank">
@@ -409,29 +383,37 @@
 <body>
     <!-- ==================== LOGIN VIEW ==================== -->
     <div id="login-view" class="auth-page" style="display:none;">
+        <div class="auth-bg-shapes">
+            <div class="auth-shape auth-shape-1"></div>
+            <div class="auth-shape auth-shape-2"></div>
+            <div class="auth-shape auth-shape-3"></div>
+        </div>
         <div class="auth-card">
             <div class="auth-brand">
-                <div class="auth-brand-icon">POS</div>
+                <div class="auth-brand-icon"><i class="fas fa-cash-register"></i></div>
                 <h1>WebPOS V2</h1>
                 <p>Masuk untuk mengelola toko Anda</p>
             </div>
 
-            <div class="auth-error" id="login-error"></div>
+            <div class="auth-error" id="login-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span></span>
+            </div>
 
             <form class="auth-form" id="login-form" onsubmit="return false;">
                 <div class="auth-input-group">
-                    <label for="login-email">Email</label>
+                    <label>Email</label>
+                    <i class="fas fa-envelope input-icon"></i>
                     <input type="email" id="login-email" placeholder="admin@toko.com" autocomplete="email">
                 </div>
 
                 <div class="auth-input-group">
-                    <label for="login-password">Password</label>
-                    <div class="password-wrap">
-                        <input type="password" id="login-password" placeholder="Min. 6 karakter" autocomplete="current-password">
-                        <button type="button" class="toggle-password" onclick="togglePassword('login-password', this)" title="Tampilkan/Sembunyikan">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </button>
-                    </div>
+                    <label>Password</label>
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="login-password" placeholder="Min. 6 karakter" autocomplete="current-password">
+                    <button type="button" class="password-toggle" onclick="togglePassword('login-password', this)" title="Tampilkan/Sembunyikan">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
 
                 <button type="submit" class="auth-btn auth-btn-primary" id="btn-login" onclick="doLogin()">
@@ -443,67 +425,79 @@
             <div class="auth-footer">
                 Belum punya akun? <a onclick="showView('register')">Daftar Sekarang</a>
             </div>
+            <div class="auth-version">WebPOS V2.0.0</div>
         </div>
     </div>
 
     <!-- ==================== REGISTER VIEW ==================== -->
     <div id="register-view" class="auth-page" style="display:none;">
+        <div class="auth-bg-shapes">
+            <div class="auth-shape auth-shape-1"></div>
+            <div class="auth-shape auth-shape-2"></div>
+            <div class="auth-shape auth-shape-3"></div>
+        </div>
         <div class="auth-card">
             <div class="auth-brand">
-                <div class="auth-brand-icon" style="background:var(--gradient-accent);">POS</div>
+                <div class="auth-brand-icon" style="background:linear-gradient(135deg, var(--accent), var(--secondary));">
+                    <i class="fas fa-user-plus"></i>
+                </div>
                 <h1>Daftar Akun</h1>
                 <p>Buat akun untuk toko baru</p>
             </div>
 
-            <div class="auth-error" id="reg-error"></div>
+            <div class="auth-error" id="reg-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span></span>
+            </div>
 
             <form class="auth-form" id="reg-form" onsubmit="return false;">
                 <div class="auth-input-group">
-                    <label for="reg-name">Nama Lengkap</label>
+                    <label>Nama Lengkap</label>
+                    <i class="fas fa-user input-icon"></i>
                     <input type="text" id="reg-name" placeholder="Budi Santoso" autocomplete="name">
                 </div>
 
                 <div class="auth-input-group">
-                    <label for="reg-email">Email</label>
+                    <label>Email</label>
+                    <i class="fas fa-envelope input-icon"></i>
                     <input type="email" id="reg-email" placeholder="admin@toko.com" autocomplete="email">
                 </div>
 
                 <div class="auth-input-group">
-                    <label for="reg-password">Password</label>
-                    <div class="password-wrap">
-                        <input type="password" id="reg-password" placeholder="Min. 6 karakter" autocomplete="new-password">
-                        <button type="button" class="toggle-password" onclick="togglePassword('reg-password', this)" title="Tampilkan/Sembunyikan">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </button>
-                    </div>
+                    <label>Password</label>
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="reg-password" placeholder="Min. 6 karakter" autocomplete="new-password">
+                    <button type="button" class="password-toggle" onclick="togglePassword('reg-password', this)" title="Tampilkan/Sembunyikan">
+                        <i class="fas fa-eye"></i>
+                    </button>
                     <div class="input-hint">Password minimal 6 karakter</div>
                 </div>
 
                 <div class="auth-input-group">
                     <label>Pilih Role</label>
-                    <div class="role-select">
+                    <div class="role-grid">
                         <div class="role-option">
                             <input type="radio" name="reg-role" id="role-kasir" value="kasir" checked>
                             <label for="role-kasir">
-                                <span class="role-badge-preview role-kasir"></span>Kasir
+                                <span class="role-dot dot-kasir"></span>Kasir
                             </label>
                         </div>
                         <div class="role-option">
                             <input type="radio" name="reg-role" id="role-admin" value="admin">
                             <label for="role-admin">
-                                <span class="role-badge-preview role-admin"></span>Admin
+                                <span class="role-dot dot-admin"></span>Admin
                             </label>
                         </div>
                         <div class="role-option">
                             <input type="radio" name="reg-role" id="role-owner" value="owner">
                             <label for="role-owner">
-                                <span class="role-badge-preview role-owner"></span>Owner
+                                <span class="role-dot dot-owner"></span>Owner
                             </label>
                         </div>
                         <div class="role-option">
                             <input type="radio" name="reg-role" id="role-developer" value="developer">
                             <label for="role-developer">
-                                <span class="role-badge-preview role-developer"></span>Dev
+                                <span class="role-dot dot-developer"></span>Dev
                             </label>
                         </div>
                     </div>
@@ -518,6 +512,7 @@
             <div class="auth-footer">
                 Sudah punya akun? <a onclick="showView('login')">Masuk di sini</a>
             </div>
+            <div class="auth-version">WebPOS V2.0.0</div>
         </div>
     </div>
 
@@ -607,7 +602,7 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- V2 Core Scripts -->
     <script src="js/core/firebase-config.js"></script>
     <script src="js/core/utils.js"></script>
     <script src="js/core/db.js"></script>
@@ -639,30 +634,24 @@
         document.getElementById('register-view').style.display = view === 'register' ? 'flex' : 'none';
         document.getElementById('dashboard-view').style.display = view === 'dashboard' ? 'block' : 'none';
 
-        // Reset errors
         document.getElementById('login-error').classList.remove('show');
         document.getElementById('reg-error').classList.remove('show');
 
-        // Focus first input
         setTimeout(() => {
             const firstInput = document.querySelector(`#${view}-view input:not([type="radio"])`);
             if (firstInput) firstInput.focus();
         }, 100);
     }
 
-    // Toggle password visibility
     function togglePassword(inputId, btn) {
         const input = document.getElementById(inputId);
         const isHidden = input.type === 'password';
         input.type = isHidden ? 'text' : 'password';
-
-        // Update icon
         btn.innerHTML = isHidden
-            ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
-            : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+            ? '<i class="fas fa-eye-slash"></i>'
+            : '<i class="fas fa-eye"></i>';
     }
 
-    // Set loading state
     function setLoading(btnId, loading) {
         const btn = document.getElementById(btnId);
         if (loading) {
@@ -674,14 +663,12 @@
         }
     }
 
-    // Show error
     function showError(elId, message) {
         const el = document.getElementById(elId);
-        el.textContent = message;
+        el.querySelector('span').textContent = message;
         el.classList.add('show');
-        // Remove animation class then re-add for re-trigger
         el.style.animation = 'none';
-        el.offsetHeight; // trigger reflow
+        el.offsetHeight;
         el.style.animation = '';
     }
 
@@ -689,9 +676,8 @@
         document.getElementById(elId).classList.remove('show');
     }
 
-    // Validate email
     function isValidEmail(email) {
-        return /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
     async function doLogin() {
@@ -700,27 +686,10 @@
 
         hideError('login-error');
 
-        // Validasi
-        if (!email) {
-            showError('login-error', 'Email wajib diisi');
-            document.getElementById('login-email').focus();
-            return;
-        }
-        if (!isValidEmail(email)) {
-            showError('login-error', 'Format email tidak valid');
-            document.getElementById('login-email').focus();
-            return;
-        }
-        if (!pass) {
-            showError('login-error', 'Password wajib diisi');
-            document.getElementById('login-password').focus();
-            return;
-        }
-        if (pass.length < 6) {
-            showError('login-error', 'Password minimal 6 karakter');
-            document.getElementById('login-password').focus();
-            return;
-        }
+        if (!email) { showError('login-error', 'Email wajib diisi'); document.getElementById('login-email').focus(); return; }
+        if (!isValidEmail(email)) { showError('login-error', 'Format email tidak valid'); document.getElementById('login-email').focus(); return; }
+        if (!pass) { showError('login-error', 'Password wajib diisi'); document.getElementById('login-password').focus(); return; }
+        if (pass.length < 6) { showError('login-error', 'Password minimal 6 karakter'); document.getElementById('login-password').focus(); return; }
 
         setLoading('btn-login', true);
         const res = await Auth.login(email, pass);
@@ -741,37 +710,12 @@
 
         hideError('reg-error');
 
-        // Validasi
-        if (!name) {
-            showError('reg-error', 'Nama lengkap wajib diisi');
-            document.getElementById('reg-name').focus();
-            return;
-        }
-        if (name.length < 3) {
-            showError('reg-error', 'Nama minimal 3 karakter');
-            document.getElementById('reg-name').focus();
-            return;
-        }
-        if (!email) {
-            showError('reg-error', 'Email wajib diisi');
-            document.getElementById('reg-email').focus();
-            return;
-        }
-        if (!isValidEmail(email)) {
-            showError('reg-error', 'Format email tidak valid');
-            document.getElementById('reg-email').focus();
-            return;
-        }
-        if (!pass) {
-            showError('reg-error', 'Password wajib diisi');
-            document.getElementById('reg-password').focus();
-            return;
-        }
-        if (pass.length < 6) {
-            showError('reg-error', 'Password minimal 6 karakter');
-            document.getElementById('reg-password').focus();
-            return;
-        }
+        if (!name) { showError('reg-error', 'Nama lengkap wajib diisi'); document.getElementById('reg-name').focus(); return; }
+        if (name.length < 3) { showError('reg-error', 'Nama minimal 3 karakter'); document.getElementById('reg-name').focus(); return; }
+        if (!email) { showError('reg-error', 'Email wajib diisi'); document.getElementById('reg-email').focus(); return; }
+        if (!isValidEmail(email)) { showError('reg-error', 'Format email tidak valid'); document.getElementById('reg-email').focus(); return; }
+        if (!pass) { showError('reg-error', 'Password wajib diisi'); document.getElementById('reg-password').focus(); return; }
+        if (pass.length < 6) { showError('reg-error', 'Password minimal 6 karakter'); document.getElementById('reg-password').focus(); return; }
 
         setLoading('btn-register', true);
         const res = await Auth.register(email, pass, { name, role });
@@ -779,7 +723,6 @@
 
         if (res.success) {
             Utils.toast('Akun berhasil dibuat! Silakan masuk.', 'success');
-            // Auto-fill login
             document.getElementById('login-email').value = email;
             document.getElementById('login-password').value = '';
             showView('login');
@@ -788,10 +731,8 @@
         }
     }
 
-    // Dashboard data loader
     async function loadDashboardData() {
         const today = Utils.getDateKey();
-
         try {
             const todayData = await DB.get(`finance/${today}`);
             const sales = todayData?.salesTotal || 0;
@@ -810,7 +751,6 @@
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">Belum ada transaksi hari ini</td></tr>';
                 return;
             }
-
             const rows = Object.entries(recent).reverse().map(([id, t]) => `
                 <tr>
                     <td>${Utils.formatDate(t.timestamp, true)}</td>
@@ -820,13 +760,11 @@
                 </tr>
             `).join('');
             tbody.innerHTML = rows;
-
         } catch (err) {
             console.error('Dashboard load error:', err);
         }
     }
 
-    // Mobile sidebar
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('open');
         document.getElementById('sidebarOverlay').classList.toggle('active');
@@ -836,7 +774,6 @@
         document.getElementById('sidebarOverlay').classList.remove('active');
     }
 
-    // Enter key handler
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             if (currentView === 'login') doLogin();
@@ -844,7 +781,6 @@
         }
     });
 
-    // Start
     init();
     </script>
 </body>

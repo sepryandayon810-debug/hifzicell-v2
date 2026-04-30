@@ -220,7 +220,7 @@
     .badge-owner { background: rgba(245,158,11,0.15); color: #f59e0b; }
     .badge-developer { background: rgba(139,92,246,0.15); color: #8b5cf6; }
   </style>
-<base target="">
+<base target="_blank">
 </head>
 <body>
 
@@ -452,6 +452,9 @@
         </div>
       </main>
     </div>
+
+    <!-- Sidebar Overlay (click to close) -->
+    <div id="sidebarOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:999;opacity:0;visibility:hidden;transition:all .25s"></div>
 
     <!-- Mobile Bottom Nav -->
     <nav class="mobile-nav" id="mobileNav">
@@ -721,8 +724,28 @@
     });
 
     // Mobile menu
-    document.getElementById('mobileMenuBtn')?.addEventListener('click', () => {
-      document.getElementById('sidebar').classList.toggle('mobile-open');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+      sidebar.classList.add('mobile-open');
+      sidebarOverlay.style.opacity = '1';
+      sidebarOverlay.style.visibility = 'visible';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('mobile-open');
+      sidebarOverlay.style.opacity = '0';
+      sidebarOverlay.style.visibility = 'hidden';
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('mobileMenuBtn')?.addEventListener('click', openSidebar);
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+
+    // Tutup sidebar saat klik menu link di mobile
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => { if(window.innerWidth < 1024) closeSidebar(); });
     });
 
     // Stat cards click
